@@ -5,4 +5,5 @@
 @import './breakpoints.css';
 @import './components.css';
 @import './embeds.css';
+@import './levelup.css';
 @plugin '@tailwindcss/typography';

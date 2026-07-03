@@ -1,0 +1,29 @@
+---
+import LuNavNode from '@components/levelup/LuNavNode.astro';
+import { getNavTree } from '@utils/curriculum';
+
+const roots = await getNavTree();
+const current = Astro.url.pathname;
+
+const isActive = (href: string) =>
+  current === href || current.startsWith(href);
+---
+
+<nav class="lu-nav w-full" aria-label="Main navigation">
+	<ul class="lu-menu">
+		{
+			roots.map((root) => (
+				<li class={isActive(root.href) ? 'active' : ''}>
+					<a href={root.href}>{root.title}</a>
+					{root.children.length > 0 && (
+						<ul>
+							{root.children.map((child) => (
+								<LuNavNode node={child} />
+							))}
+						</ul>
+					)}
+				</li>
+			))
+		}
+	</ul>
+</nav>

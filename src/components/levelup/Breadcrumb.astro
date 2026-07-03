@@ -1,0 +1,26 @@
+---
+import type { Crumb } from '@utils/curriculum';
+
+export interface Props {
+  crumbs: Crumb[];
+}
+const { crumbs } = Astro.props;
+---
+
+{
+	crumbs.length > 1 && (
+		<nav aria-label="Breadcrumb">
+			<ol class="lu-breadcrumb">
+				{crumbs.map((c) => (
+					<li class={c.active ? 'active' : ''}>
+						{c.active ? (
+							<a aria-current="page">{c.label}</a>
+						) : (
+							<a href={c.href}>{c.label}</a>
+						)}
+					</li>
+				))}
+			</ol>
+		</nav>
+	)
+}

@@ -18,15 +18,19 @@ import { fontProviders } from 'astro/config';
 /** @type {import('astro').AstroUserConfig['fonts']} */
 export const fonts = [
   {
+    // Body text — matches the original LevelUp site (Roboto)
     provider: fontProviders.bunny(),
-    name: 'Rubik',
-    weights: [300, 400, 500, 600, 700, 800],
+    name: 'Roboto',
+    weights: [300, 400, 500, 700],
+    styles: ['normal', 'italic'],
     cssVariable: '--font-sans',
   },
   {
+    // Headings, nav, header & footer — matches the original LevelUp site (Arvo)
     provider: fontProviders.bunny(),
-    name: 'IBM Plex Serif',
-    weights: [300, 400, 500, 600, 700],
+    name: 'Arvo',
+    weights: [400, 700],
+    styles: ['normal', 'italic'],
     cssVariable: '--font-serif',
   },
   {

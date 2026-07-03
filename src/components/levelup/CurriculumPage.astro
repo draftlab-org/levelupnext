@@ -1,0 +1,190 @@
+---
+import Breadcrumb from '@components/levelup/Breadcrumb.astro';
+import SectionCard from '@components/levelup/SectionCard.astro';
+import type { CurriculumEntry } from '@utils/curriculum';
+import type { Crumb } from '@utils/curriculum';
+
+export interface Props {
+  entry: CurriculumEntry;
+  crumbs: Crumb[];
+  childPages?: CurriculumEntry[];
+  childLinkText?: string;
+  indexHeading?: string;
+  toc?: { slug: string; text: string; depth: number }[];
+}
+
+const {
+  entry,
+  crumbs,
+  childPages = [],
+  childLinkText = 'Continue »',
+  indexHeading,
+  toc = [],
+} = Astro.props;
+
+const d = entry.data;
+// Some index pages (e.g. the curriculum root) have no body — skip the empty card.
+const hasBody = (entry.body ?? '').trim().length > 0;
+const layout = d.layout ?? 'content-page';
+const isModule = layout === 'module';
+const isIndex =
+  layout === 'page-index' || layout === 'curriculum' || layout === 'community';
+
+// Credits + summary block: shown only when author, date AND summary are all
+// present (matches the original Jekyll templates).
+const showCredits = Boolean(d.author && d.date && d.summary);
+
+// ADIDS metadata block (content-page layout only)
+const showAdidsMeta = Boolean(d.adids);
+
+// "On this page" table of contents (content-page & module layouts)
+const showToc = !isIndex && toc.length >= 3;
+
+// ADIDS session groups (module layout)
+type LinkItem = { name?: string | null; url?: string | null };
+const sessionGroups: { label: string; items: LinkItem[] }[] = isModule
+  ? [
+      { label: 'Activity and Discussion', items: d.activity ?? [] },
+      { label: 'Input', items: d.input ?? [] },
+      { label: 'Deepening', items: d.deepening ?? [] },
+      { label: 'Synthesis', items: d.synthesis ?? [] },
+    ]
+  : [];
+---
+
+<SectionCard>
+	<Breadcrumb crumbs={crumbs} />
+	<h1 class="mt-3 text-4xl leading-tight md:text-5xl">{d.title}</h1>
+
+	{
+		showCredits && (
+			<div class="mt-4 space-y-3">
+				<p class="text-sm">
+					<strong>Credits</strong>{' '}
+					<span class="text-primary-500">{d.author}</span>
+					<span class="mx-2 hidden sm:inline">·</span>
+					<br class="sm:hidden" />
+					<strong>Last Updated</strong> {d.date}
+				</p>
+				<p>{d.summary}</p>
+			</div>
+		)
+	}
+
+	{
+		showAdidsMeta && (
+			<div class="mt-6 space-y-3 border-l-4 border-secondary-300 pl-4">
+				<div>
+					<h4 class="text-base font-bold text-secondary-500">ADIDS Element</h4>
+					<p>{d.adids}</p>
+				</div>
+				{d.parent && (
+					<div>
+						<h4 class="text-base font-bold text-secondary-500">
+							Parent Topic(s)
+						</h4>
+						<p>{d.parent}</p>
+					</div>
+				)}
+				{d.duration && (
+					<div>
+						<h4 class="text-base font-bold text-secondary-500">Duration</h4>
+						<p>{d.duration}</p>
+					</div>
+				)}
+			</div>
+		)
+	}
+</SectionCard>
+
+{/* Rendered markdown body */}
+{
+	hasBody && (
+		<SectionCard>
+			{showToc && (
+				<nav
+					aria-label="On this page"
+					class="mb-8 rounded border border-secondary-200 bg-secondary-50/50 p-4"
+				>
+					<p class="font-serif text-sm font-bold tracking-wide text-secondary-600 uppercase">
+						On this page
+					</p>
+					<ul class="mt-2 space-y-1">
+						{toc.map((h) => (
+							<li class={h.depth >= 3 ? 'ml-4' : ''}>
+								<a
+									href={`#${h.slug}`}
+									class="text-sm text-primary-500 hover:underline"
+								>
+									{h.text}
+								</a>
+							</li>
+						))}
+					</ul>
+				</nav>
+			)}
+			<div class="lu-content">
+				<slot />
+			</div>
+		</SectionCard>
+	)
+}
+
+{/* ADIDS session lists (module pages) */}
+{
+	isModule && (
+		<SectionCard>
+			<div class="grid gap-6 sm:grid-cols-2">
+				{sessionGroups.map((group) => (
+					<div>
+						<h3 class="text-xl font-bold text-secondary-500">{group.label}</h3>
+						<ul class="lu-content mt-2">
+							{group.items.filter((i) => i.name && i.url).length === 0 ? (
+								<li class="text-ink/60">N/A</li>
+							) : (
+								group.items
+									.filter((i) => i.name && i.url)
+									.map((i) => (
+										<li>
+											<a href={i.url!}>{i.name}</a>
+										</li>
+									))
+							)}
+						</ul>
+					</div>
+				))}
+			</div>
+		</SectionCard>
+	)
+}
+
+{/* Child listing (section index pages) */}
+{
+	isIndex && (
+		<SectionCard>
+			{indexHeading && (
+				<h2 class="mb-4 text-3xl font-bold text-secondary-500">
+					{indexHeading}
+				</h2>
+			)}
+			<div class="space-y-8">
+				{childPages.map((child) => (
+					<article>
+						<h3 class="text-xl font-bold">
+							<a href={child.data.permalink}>{child.data.title}</a>
+						</h3>
+						{child.data.summary && (
+							<p class="mt-1">{child.data.summary}</p>
+						)}
+						<a
+							href={child.data.permalink}
+							class="mt-1 inline-block font-bold text-primary-500 hover:underline"
+						>
+							{childLinkText}
+						</a>
+					</article>
+				))}
+			</div>
+		</SectionCard>
+	)
+}

@@ -316,6 +316,51 @@ const resourcesCollection = defineCollection({
   }),
 });
 
+// LevelUp curriculum / guides — hierarchical markdown pages migrated from the
+// original Jekyll site. The nested file path mirrors the URL structure, and
+// `permalink` is the source of truth for routing and the navigation tree.
+const curriculumLinkSchema = z.object({
+  name: z.string().nullable().optional(),
+  url: z.string().nullable().optional(),
+});
+
+const curriculumCollection = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/curriculum' }),
+  schema: z
+    .object({
+      title: z.string(),
+      permalink: z.string(),
+      // picks the render template: content-page | module | page-index |
+      // curriculum | community | news-updates | site-map
+      layout: z.string().default('content-page'),
+      // Optional string fields are nullable too: the original Jekyll frontmatter
+      // frequently left keys empty (e.g. `author:`), which parses to null.
+      breadcrumb: z.string().nullable().optional(),
+      author: z.string().nullable().optional(),
+      summary: z.string().nullable().optional(),
+      parent: z.string().nullable().optional(),
+      date: z.coerce.string().nullable().optional(),
+      updated: z.coerce.string().nullable().optional(),
+      duration: z.coerce.string().nullable().optional(),
+      adids: z.string().nullable().optional(),
+      platforms: z.string().nullable().optional(),
+      platform: z.string().nullable().optional(),
+      level: z.string().nullable().optional(),
+      prerequisites: z.string().nullable().optional(),
+      weight: z.number().nullable().optional(),
+      hide: z.boolean().default(false),
+      status: z
+        .enum(['draft', 'published', 'archived'])
+        .default('published'),
+      // ADIDS session link groups (module pages)
+      activity: z.array(curriculumLinkSchema).optional(),
+      input: z.array(curriculumLinkSchema).optional(),
+      deepening: z.array(curriculumLinkSchema).optional(),
+      synthesis: z.array(curriculumLinkSchema).optional(),
+    })
+    .passthrough(),
+});
+
 const docsCollection = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
   schema: z.object({
@@ -339,4 +384,5 @@ export const collections = {
   partners: partnersCollection,
   categories: categoriesCollection,
   resources: resourcesCollection,
+  curriculum: curriculumCollection,
 };

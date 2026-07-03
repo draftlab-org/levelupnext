@@ -1,0 +1,22 @@
+---
+import type { TreeNode } from '@utils/curriculum';
+import SiteMapNode from '@components/levelup/SiteMapNode.astro';
+
+export interface Props {
+  node: TreeNode;
+}
+const { node } = Astro.props;
+---
+
+<li class="my-1">
+	<a href={node.href} class="text-primary-500 hover:underline">{node.title}</a>
+	{
+		node.children.length > 0 && (
+			<ul class="mt-1 ml-5 border-l border-secondary-200 pl-4">
+				{node.children.map((child) => (
+					<SiteMapNode node={child} />
+				))}
+			</ul>
+		)
+	}
+</li>

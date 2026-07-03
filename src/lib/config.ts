@@ -8,7 +8,6 @@ export const siteConfig = {
   description: configData.description,
   url: configData.url,
   favicon: configData.favicon,
-  defaultOgImage: configData.defaultOgImage,
   social: configData.social,
 } as const;
 

@@ -1,0 +1,325 @@
+/* ============================================================
+   LevelUp bespoke styling
+   Recreates the look of the original level-up.cc Jekyll site
+   (Arvo + Roboto, sand/orange/teal palette, white section cards).
+   ============================================================ */
+
+/* ---- Page shell ------------------------------------------------ */
+.lu-outer {
+  background-color: var(--color-mist);
+}
+
+/* White content card, echoing the original `.section-block` */
+.lu-card {
+  background-color: var(--color-white);
+}
+
+/* ---- Site header (orange bar) --------------------------------- */
+.lu-header {
+  background-color: var(--color-orange);
+}
+.lu-header a {
+  color: var(--color-white);
+}
+
+/* ---- Breadcrumb ------------------------------------------------ */
+.lu-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 0.1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-serif);
+}
+.lu-breadcrumb a {
+  color: var(--color-orange);
+}
+.lu-breadcrumb a:hover {
+  color: var(--color-primary-700);
+}
+.lu-breadcrumb li:not(:last-child)::after {
+  content: '\25ba'; /* ► */
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--color-orange);
+}
+.lu-breadcrumb li.active a {
+  color: var(--color-secondary-500);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* ---- Home call-to-action cards -------------------------------- */
+.lu-home-card {
+  border-left: 12px solid transparent;
+  border-image: linear-gradient(
+      to bottom,
+      #fff 0,
+      #fff 12px,
+      var(--color-orange) 12px,
+      var(--color-orange) 64px,
+      #fff 64px,
+      #fff 100%
+    )
+    1 stretch;
+  padding-left: 2.5rem;
+}
+
+/* ---- Navigation (recursive hover dropdowns) -------------------- */
+.lu-nav {
+  background-color: var(--color-white);
+}
+.lu-menu,
+.lu-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* top-level row */
+.lu-menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  padding: 0 4%;
+}
+.lu-menu > li {
+  position: relative;
+}
+.lu-menu > li > a {
+  display: inline-block;
+  padding: 0.6rem 0.25rem;
+  font-family: var(--font-serif);
+  color: var(--color-orange);
+  white-space: nowrap;
+}
+.lu-menu > li > a::before {
+  content: '\25ba';
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0 0.4rem;
+  font-size: 0.7rem;
+  transition: transform 0.15s ease;
+}
+.lu-menu > li:hover > a,
+.lu-menu > li:focus-within > a {
+  color: var(--color-secondary-400);
+}
+.lu-menu > li:hover > a::before,
+.lu-menu > li:focus-within > a::before {
+  transform: rotate(90deg);
+}
+.lu-menu > li.active > a {
+  color: var(--color-secondary-500);
+}
+
+/* submenu panels */
+.lu-menu ul {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 40;
+  min-width: 16rem;
+  max-width: 22rem;
+  background-color: var(--color-teal-light);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+.lu-menu li:hover > ul,
+.lu-menu li:focus-within > ul {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+/* nested (2nd+ level) flyout to the side */
+.lu-menu ul ul {
+  top: 0;
+  left: 100%;
+}
+.lu-menu ul li {
+  position: relative;
+}
+.lu-menu ul a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+.lu-menu ul li:has(ul) > a::after {
+  content: '\25b8'; /* small ► for items with children */
+  float: right;
+  opacity: 0.8;
+}
+.lu-menu ul a:hover,
+.lu-menu ul a:focus {
+  background-color: var(--color-white);
+  color: var(--color-secondary-500);
+}
+
+/* ---- Footer --------------------------------------------------- */
+.lu-footer {
+  background-color: var(--color-secondary-500);
+}
+.lu-footer a {
+  color: var(--color-white);
+  transition: color 0.15s ease;
+}
+.lu-footer a:hover {
+  color: var(--color-orange);
+}
+
+/* ============================================================
+   Rendered markdown content (article / module / page bodies)
+   ============================================================ */
+.lu-content {
+  color: var(--color-ink);
+  line-height: 1.65;
+}
+.lu-content > * + * {
+  margin-top: 1rem;
+}
+.lu-content h2,
+.lu-content h3,
+.lu-content h4,
+.lu-content h5 {
+  color: var(--color-secondary-500);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  margin-top: 2rem;
+  line-height: 1.2;
+}
+.lu-content h2 {
+  font-size: 1.9rem;
+}
+.lu-content h3 {
+  font-size: 1.5rem;
+}
+.lu-content h4 {
+  font-size: 1.2rem;
+}
+.lu-content h5 {
+  font-size: 1rem;
+}
+.lu-content a {
+  color: var(--color-orange);
+}
+.lu-content a:hover {
+  color: var(--color-primary-700);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.lu-content strong {
+  color: var(--color-secondary-500);
+  font-weight: 700;
+}
+.lu-content blockquote {
+  color: var(--color-secondary-500);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.2rem;
+  border-left: 4px solid var(--color-teal-light);
+  padding-left: 1rem;
+  margin: 1.25rem 0;
+}
+.lu-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+}
+.lu-content hr {
+  border: 0;
+  border-top: 1px solid var(--color-mist);
+  margin: 2rem 0;
+}
+
+/* Unordered lists — orange triangle markers (matches original) */
+.lu-content ul {
+  list-style: none;
+  padding-left: 1.25rem;
+  margin: 0.75rem 0;
+}
+.lu-content ul > li {
+  position: relative;
+  padding-left: 0.25rem;
+  margin: 0.35rem 0;
+}
+.lu-content ul > li::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 0.55rem;
+  border-color: transparent var(--color-orange);
+  border-style: solid;
+  border-width: 0.35rem 0 0.35rem 0.45rem;
+}
+
+/* Ordered lists — large orange serif numerals (matches original) */
+.lu-content ol {
+  list-style: none;
+  counter-reset: li;
+  padding-left: 0.5rem;
+  margin: 0.75rem 0;
+}
+.lu-content ol > li {
+  counter-increment: li;
+  position: relative;
+  margin: 0 0 0.5rem 2em;
+  padding: 0.1rem 0.25rem;
+}
+.lu-content ol > li::before {
+  content: counter(li);
+  position: absolute;
+  top: -0.15rem;
+  left: -1.9rem;
+  color: var(--color-orange);
+  font-size: 1.6rem;
+  font-family: var(--font-serif);
+  line-height: 1.4;
+}
+.lu-content li > ul,
+.lu-content li > ol {
+  margin-top: 0.35rem;
+}
+
+/* Tables in markdown */
+.lu-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.95rem;
+}
+.lu-content th,
+.lu-content td {
+  border: 1px solid var(--color-secondary-200);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+.lu-content th {
+  background-color: var(--color-secondary-50);
+  color: var(--color-secondary-700);
+  font-family: var(--font-serif);
+}
+
+/* "metabox" helper from the original (bordered callout) */
+.lu-content .metabox {
+  padding: 1rem;
+  border: 3px solid var(--color-secondary-500);
+}
+
+/* Anchor-link icon on headings (id-linked) */
+.lu-content :is(h2, h3) > a[href^='#'] {
+  color: inherit;
+}

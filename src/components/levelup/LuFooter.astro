@@ -1,0 +1,45 @@
+---
+// Footer matching the original LevelUp three-column layout.
+const links: { label: string; href: string; external?: boolean }[][] = [
+  [
+    { label: 'About LevelUp', href: '/community/about/' },
+    { label: 'News & Updates', href: '/news/' },
+    { label: 'CC-BY-SA 3.0 License', href: '/license/' },
+  ],
+  [
+    { label: 'Contact', href: '/community/contribute/' },
+    { label: 'Contribute', href: '/community/contribute/' },
+    {
+      label: 'GitHub',
+      href: 'https://github.com/levelupcc/level-up',
+      external: true,
+    },
+  ],
+  [{ label: 'Site Map', href: '/site-map/' }],
+];
+---
+
+<footer class="lu-footer w-full">
+	<div
+		class="mx-auto flex w-full flex-wrap items-start justify-around gap-8 px-6 py-8 font-serif"
+	>
+		{
+			links.map((col) => (
+				<div class="space-y-2">
+					{col.map((l) => (
+						<p>
+							<a
+								href={l.href}
+								{...(l.external
+									? { target: '_blank', rel: 'noopener noreferrer' }
+									: {})}
+							>
+								{l.label}
+							</a>
+						</p>
+					))}
+				</div>
+			))
+		}
+	</div>
+</footer>

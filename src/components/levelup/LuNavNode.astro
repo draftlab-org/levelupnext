@@ -1,0 +1,23 @@
+---
+import type { TreeNode } from '@utils/curriculum';
+import LuNavNode from '@components/levelup/LuNavNode.astro';
+
+export interface Props {
+  node: TreeNode;
+}
+const { node } = Astro.props;
+const hasChildren = node.children.length > 0;
+---
+
+<li>
+	<a href={node.href}>{node.title}</a>
+	{
+		hasChildren && (
+			<ul>
+				{node.children.map((child) => (
+					<LuNavNode node={child} />
+				))}
+			</ul>
+		)
+	}
+</li>

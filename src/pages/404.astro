@@ -1,22 +1,24 @@
 ---
-import Button from '@components/atoms/Button.astro';
-import HeroSection from '@components/sections/HeroSection.astro';
-import PageLayout from '@layouts/PageLayout.astro';
-import SectionLayout from '@layouts/SectionLayout.astro';
+import SectionCard from '@components/levelup/SectionCard.astro';
+import LevelUpLayout from '@layouts/LevelUpLayout.astro';
 ---
 
-<PageLayout
+<LevelUpLayout
 	title="Page Not Found"
 	description="The page you're looking for doesn't exist."
 >
-	<SectionLayout>
-		<HeroSection title="404" subtitle="Page not found">
-			<p class="mt-4 text-lg">
-				The page you're looking for doesn't exist or has been moved.
-			</p>
-			<div class="mt-8">
-				<Button href="/" variant="primary" size="lg"> Go back home </Button>
-			</div>
-		</HeroSection>
-	</SectionLayout>
-</PageLayout>
+	<SectionCard>
+		<h1 class="text-5xl md:text-6xl">404</h1>
+		<p class="mt-4 text-lg">
+			The page you're looking for doesn't exist or has been moved.
+		</p>
+		<p class="mt-6">
+			<a
+				href="/"
+				class="inline-block rounded border border-primary-500 px-4 py-2 text-primary-500 hover:bg-primary-500 hover:text-white"
+			>
+				Go back home
+			</a>
+		</p>
+	</SectionCard>
+</LevelUpLayout>

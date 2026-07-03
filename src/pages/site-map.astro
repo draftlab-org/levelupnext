@@ -1,0 +1,29 @@
+---
+import Breadcrumb from '@components/levelup/Breadcrumb.astro';
+import SectionCard from '@components/levelup/SectionCard.astro';
+import SiteMapNode from '@components/levelup/SiteMapNode.astro';
+import LevelUpLayout from '@layouts/LevelUpLayout.astro';
+import { getNavTree } from '@utils/curriculum';
+
+const roots = await getNavTree({ includeHidden: true });
+
+const crumbs = [
+  { label: 'Home', href: '/', active: false },
+  { label: 'Site Map', href: '/site-map/', active: true },
+];
+---
+
+<LevelUpLayout title="Site Map" description="A map of every page on LevelUp.">
+	<SectionCard>
+		<Breadcrumb crumbs={crumbs} />
+		<h1 class="mt-3 text-4xl md:text-5xl">Site Map</h1>
+	</SectionCard>
+	<SectionCard>
+		<ul class="lu-content">
+			<li class="my-1">
+				<a href="/" class="text-primary-500 hover:underline">LevelUp (Home)</a>
+			</li>
+			{roots.map((node) => <SiteMapNode node={node} />)}
+		</ul>
+	</SectionCard>
+</LevelUpLayout>

@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import Breadcrumb from '@components/levelup/Breadcrumb.astro';
+import SectionCard from '@components/levelup/SectionCard.astro';
+import LevelUpLayout from '@layouts/LevelUpLayout.astro';
+import { isVisible } from '@utils/content';
+
+const articles = (await getCollection('articles'))
+  .filter((a) => isVisible(a))
+  .sort(
+    (a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf()
+  );
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+const crumbs = [
+  { label: 'Home', href: '/', active: false },
+  { label: 'News & Updates', href: '/news/', active: true },
+];
+---
+
+<LevelUpLayout title="News & Updates" description="News and updates from LevelUp.">
+	<SectionCard>
+		<Breadcrumb crumbs={crumbs} />
+		<h1 class="mt-3 text-4xl md:text-5xl">News &amp; Updates</h1>
+	</SectionCard>
+
+	{
+		articles.map((post) => (
+			<SectionCard>
+				<div class="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
+					<div class="shrink-0 text-sm text-primary-500 sm:w-40">
+						<p>{post.data.authors?.join(', ')}</p>
+						<p>{fmtDate(post.data.publishedDate)}</p>
+					</div>
+					<div class="flex-1">
+						<h2 class="text-2xl md:text-3xl">
+							<a href={post.data.permalink}>{post.data.title}</a>
+						</h2>
+						{post.data.excerpt && <p class="mt-2">{post.data.excerpt}</p>}
+					</div>
+				</div>
+			</SectionCard>
+		))
+	}
+
+	{
+		articles.length === 0 && (
+			<SectionCard>
+				<p>No news yet — check back soon.</p>
+			</SectionCard>
+		)
+	}
+</LevelUpLayout>

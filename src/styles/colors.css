@@ -1,29 +1,31 @@
 @theme {
   --color-*: initial;
 
-  --color-primary-50: oklch(98.87% 0.03 106.87);
-  --color-primary-100: oklch(97.7% 0.07 108.5);
-  --color-primary-200: oklch(96.26% 0.13 108.62);
-  --color-primary-300: oklch(94.05% 0.16 106.67);
-  --color-primary-400: oklch(89.35% 0.18 103.42);
-  --color-primary-500: oklch(82.94% 0.17 99.64);
-  --color-primary-600: oklch(71.06% 0.14 91.06);
-  --color-primary-700: oklch(57.92% 0.12 82.03);
-  --color-primary-800: oklch(49.71% 0.1 76.97);
-  --color-primary-900: oklch(43.73% 0.08 71.01);
-  --color-primary-950: oklch(29.78% 0.06 67.55);
+  /* LevelUp brand orange — accent, header bar, links (base: #F0A742) */
+  --color-primary-50: #fef7ec;
+  --color-primary-100: #fdedd1;
+  --color-primary-200: #fadfae;
+  --color-primary-300: #f6cb7e;
+  --color-primary-400: #f3b968;
+  --color-primary-500: #f0a742;
+  --color-primary-600: #d98f2c;
+  --color-primary-700: #b4741f;
+  --color-primary-800: #8f5c1c;
+  --color-primary-900: #744b1b;
+  --color-primary-950: #422809;
 
-  --color-secondary-50: oklch(97.17% 0.01 338.91);
-  --color-secondary-100: oklch(95.02% 0.03 334.88);
-  --color-secondary-200: oklch(90.22% 0.06 336.47);
-  --color-secondary-300: oklch(82.8% 0.11 339.11);
-  --color-secondary-400: oklch(73.12% 0.18 342.32);
-  --color-secondary-500: oklch(66.09% 0.21 345.73);
-  --color-secondary-600: oklch(59.37% 0.22 350.54);
-  --color-secondary-700: oklch(52.56% 0.2 353.64);
-  --color-secondary-800: oklch(46.02% 0.17 353.67);
-  --color-secondary-900: oklch(39.48% 0.14 352.67);
-  --color-secondary-950: oklch(28.55% 0.1 354.73);
+  /* LevelUp brand teal — headings, footer, nav dropdown (base: #24929B) */
+  --color-secondary-50: #eaf6f7;
+  --color-secondary-100: #cfeaec;
+  --color-secondary-200: #a6d6da;
+  --color-secondary-300: #65b2b9;
+  --color-secondary-400: #3ea0a8;
+  --color-secondary-500: #24929b;
+  --color-secondary-600: #1f7c84;
+  --color-secondary-700: #1b666c;
+  --color-secondary-800: #184f54;
+  --color-secondary-900: #163f43;
+  --color-secondary-950: #0a2427;
 
   /* --color-secondary-50: oklch(96.97% 0.01 119.58);
   --color-secondary-100: oklch(92.97% 0.02 123.98);
@@ -96,6 +98,14 @@
   --color-gray-800: oklch(38.05% 0.03 259.74);
   --color-gray-900: oklch(34.73% 0.02 262.78);
   --color-gray-950: oklch(26.85% 0.02 266.3);
+
+  /* LevelUp brand tokens (named for clarity in bespoke components) */
+  --color-sand: #f3b968; /* page background */
+  --color-mist: #e7e7ed; /* content wrapper background */
+  --color-ink: #666666; /* body text */
+  --color-teal: #24929b;
+  --color-teal-light: #65b2b9;
+  --color-orange: #f0a742;
 
   --color-white: #ffffff;
   --color-black: #000000;

@@ -1,0 +1,30 @@
+---
+import LuFooter from '@components/levelup/LuFooter.astro';
+import LuHeader from '@components/levelup/LuHeader.astro';
+import LuNav from '@components/levelup/LuNav.astro';
+import LuSearch from '@components/levelup/LuSearch.tsx';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: ImageMetadata;
+  showNav?: boolean;
+}
+
+const { title, description, image, showNav = true } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} image={image}>
+	<div class="flex min-h-screen w-full flex-col items-center bg-sand">
+		<div class="lu-outer flex w-full max-w-[960px] flex-col">
+			<LuHeader />
+			{showNav && <LuNav />}
+			<main class="flex w-full flex-col gap-5 px-3 py-5 sm:px-5">
+				<slot />
+			</main>
+			<LuFooter />
+		</div>
+	</div>
+	<LuSearch client:idle />
+</BaseLayout>

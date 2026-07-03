@@ -1,33 +1,49 @@
 ---
-import { getEntry } from 'astro:content';
-import HeroSection from '@components/sections/HeroSection.astro';
-import Sections from '@components/sections/Sections.astro';
-import PageLayout from '@layouts/PageLayout.astro';
-import SectionLayout from '@layouts/SectionLayout.astro';
+import SectionCard from '@components/levelup/SectionCard.astro';
+import LevelUpLayout from '@layouts/LevelUpLayout.astro';
 
-const page = await getEntry('pages', 'home');
-
-if (!page) {
-  throw new Error('Homepage content not found. Create src/content/pages/home.yaml');
-}
-
+const cards = [
+  {
+    title: 'Getting Started',
+    href: '/community/getting-started/',
+    text: 'Start here to learn how to use and adapt LevelUp resources for your digital safety trainings.',
+  },
+  {
+    title: 'News & Updates',
+    href: '/news/',
+    text: 'Stay informed of new content & materials, site updates, upcoming events, and other news.',
+  },
+  {
+    title: 'Contribute & Contact',
+    href: '/community/contribute/',
+    text: 'Get in touch to help improve LevelUp — share training content with other trainers, provide feedback, and more.',
+  },
+];
 ---
 
-<PageLayout
-	title={page.data.title}
-	description={page.data.description}
-	image={page.data.heroImage}
+<LevelUpLayout
+	title="LevelUp"
+	description="Resources for the global digital safety training community."
 >
-	<SectionLayout
-		bgImage={page.data.heroImage}
-		bgType={page.data.background}
-		sectionLabel="hero"
-	>
-		<HeroSection
-			title={page.data.title}
-			subtitle={page.data.description}
-			background={page.data.background}
-		/>
-	</SectionLayout>
-	<Sections sectionItems={page.data.sections} />
-</PageLayout>
+	{
+		cards.map((card) => (
+			<SectionCard>
+				<div class="lu-home-card">
+					<h2 class="text-3xl md:text-4xl">
+						<a href={card.href}>{card.title}</a>
+					</h2>
+					<p class="mt-4 text-lg">
+						{card.text}{' '}
+						<a
+							href={card.href}
+							class="ml-1 inline-block rounded border border-primary-500 px-2 py-0.5 text-sm text-primary-500 hover:bg-primary-500 hover:text-white"
+							aria-label={`Go to ${card.title}`}
+						>
+							&raquo;
+						</a>
+					</p>
+				</div>
+			</SectionCard>
+		))
+	}
+</LevelUpLayout>
