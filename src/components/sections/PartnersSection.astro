@@ -1,0 +1,64 @@
+---
+import { getCollection, type InferEntrySchema } from 'astro:content';
+import Image from '@components/atoms/Image.astro';
+
+export type Partner = InferEntrySchema<'partners'>;
+
+export interface Props {
+  title: string;
+  category?: string;
+  sectionLabel?: string;
+	class?: string
+}
+
+const { title, category, class: className = '', sectionLabel = 'Partners' } = Astro.props;
+
+// Query partners collection
+const allPartners = await getCollection('partners');
+
+// Filter by category if specified, otherwise show all
+const filteredPartners = category
+  ? allPartners.filter(p => p.data.category === category)
+  : allPartners;
+
+// Sort by order field
+const partners = filteredPartners
+  .sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
+  .map(entry => entry.data);
+---
+
+<div>
+	<!-- Section Header -->
+	<div class="mb-12 text-center">
+		<h2 class="mb-4">{title}</h2>
+	</div>
+
+	<!-- Partners Grid -->
+	<div class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+		{
+			partners.map((partner) => (
+				<div class="flex flex-col items-center text-center">
+					<a
+						href={`/partners/${partner.id}`}
+						class="group"
+						data-component
+					>
+						{partner.image && (
+							<div class="mb-4 flex h-32 w-full items-center justify-center rounded-lg bg-white p-6 shadow-sm transition-shadow group-hover:shadow-md">
+								<Image
+									src={partner.image}
+									alt={partner.name}
+									width={200}
+									height={128}
+									class="max-h-full max-w-full object-contain"
+								/>
+							</div>
+						)}
+						<h4 class="mb-2">{partner.name}</h4>
+						{partner.affiliation && <p class="">{partner.affiliation}</p>}
+					</a>
+				</div>
+			))
+		}
+	</div>
+</div>

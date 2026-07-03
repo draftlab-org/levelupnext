@@ -1,0 +1,64 @@
+{
+  "slug": "main",
+  "title": "Main Navigation",
+  "items": [
+    {
+      "type": "link",
+      "label": "How to Use",
+      "link": {
+        "type": "internal",
+        "pageRef": "/how-to-use"
+      },
+      "description": "How to use the Scaffold template"
+    },
+    {
+      "type": "dropdown",
+      "label": "Collections Demo",
+      "children": [
+        {
+          "label": "Articles",
+          "link": {
+            "type": "internal",
+            "pageRef": "/articles"
+          }
+        },
+        {
+          "label": "People",
+          "link": {
+            "type": "internal",
+            "pageRef": "/people"
+          }
+        },
+        {
+          "label": "Resources",
+          "link": {
+            "type": "internal",
+            "pageRef": "/resources"
+          }
+        },
+        {
+          "label": "Partners",
+          "link": {
+            "type": "internal",
+            "pageRef": "/partners"
+          }
+        },
+        {
+          "label": "Docs",
+          "link": {
+            "type": "internal",
+            "pageRef": "/docs"
+          }
+        }
+      ]
+    },
+    {
+      "type": "link",
+      "label": "Feature Showcase",
+      "link": {
+        "type": "internal",
+        "pageRef": "/feature-showcase"
+      }
+    }
+  ]
+}

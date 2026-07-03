@@ -1,0 +1,101 @@
+/* Wire Tailwind's font-* utilities to the CSS variables that fonts.config.mjs
+   sets at :root. `@theme inline` makes Tailwind emit the utilities as
+   `font-family: var(--font-sans)` directly, instead of trying to redefine
+   --font-sans itself (which would be circular). */
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+}
+
+@theme {
+  /* TODO: #19 explore custom text sizes */
+  /* --text-sm: 0.625rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.125rem;
+  --text-2xl: 1.4rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 2.5rem;
+  --text-6xl: 3.5rem; */
+}
+
+/* defines default link styling as a single source of truth */
+@utility link-default {
+  @apply text-secondary-600 underline underline-offset-2 transition-colors hover:text-secondary-800;
+}
+
+/* Remove backtick pseudo-elements from prose inline code.
+   Must be unlayered to override @tailwindcss/typography plugin styles. */
+.prose
+  :where(code):not(
+    :where([class~='not-prose'], [class~='not-prose'] *)
+  )::before,
+.prose
+  :where(code):not(
+    :where([class~='not-prose'], [class~='not-prose'] *)
+  )::after {
+  content: none;
+}
+
+/* Style inline code to match Expressive Code's catppuccin-frappe theme */
+.prose
+  :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)):not(
+    pre code
+  ) {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+  border-width: 1px;
+  border-color: var(--color-gray-200);
+  font-size: 0.875em;
+  font-weight: 400;
+}
+
+.prose
+  :where(strong):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+  font-weight: 500;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply scroll-mt-24 font-serif font-bold;
+  }
+  h1 {
+    @apply text-4xl md:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-5xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h4 {
+    @apply text-base;
+  }
+
+  p,
+  li {
+    @apply text-sm md:text-base;
+  }
+
+  strong {
+    @apply font-medium;
+  }
+
+  /* applies default link styling to "a" components that do not have the "data-component" property,
+  so we can manage styling of Links, Buttons etc directly in the component  */
+  a:not([data-component]) {
+    @apply link-default;
+  }
+}

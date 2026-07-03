@@ -1,0 +1,12 @@
+{
+  "id": "lisa-wang",
+  "name": "Lisa Wang",
+  "headshot": "/src/assets/people/lisa-wang.png",
+  "title": "Storytelling Lead",
+  "affiliation": "Civic Data Collaborative",
+  "extraInfo": "Translates complex data policy into compelling public narratives",
+  "sections": [
+    "Marketing"
+  ],
+  "status": "published"
+}

@@ -1,0 +1,1203 @@
+# ============================================================================
+# Pages CMS Configuration
+# Documentation: https://pagescms.org/docs/configuration/
+# ============================================================================
+
+# ============================================================================
+# MEDIA
+# ============================================================================
+media:
+  - name: images
+    label: All Images
+    input: src/assets
+    output: /src/assets
+
+# ============================================================================
+# REUSABLE COMPONENTS
+# ============================================================================
+components:
+  # --------------------------------------------------------------------------
+  # Primitives (button, card, background)
+  # --------------------------------------------------------------------------
+
+  button:
+    type: object
+    fields:
+      - name: variant
+        label: Variant
+        type: select
+        options:
+          values:
+            - label: Primary
+              value: primary
+            - label: Secondary
+              value: secondary
+            - label: Outline
+              value: outline
+            - label: Ghost
+              value: ghost
+        required: true
+        default: primary
+      - name: size
+        label: Size
+        type: select
+        options:
+          values:
+            - label: Small
+              value: sm
+            - label: Medium
+              value: md
+            - label: Large
+              value: lg
+        required: true
+        default: md
+      - name: text
+        label: Text
+        type: string
+        required: true
+        description: The text displayed on the button
+      - name: href
+        label: Link URL
+        type: string
+        required: true
+        description: The URL this button links to
+
+  card:
+    type: object
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: content
+        label: Content
+        type: rich-text
+        description: Brief description of the card
+      - name: image
+        label: Image
+        type: image
+        description: Card image (absolute path, e.g. /src/assets/images/card.jpg)
+      - name: color
+        label: Color
+        type: select
+        options:
+          values:
+            - label: Primary
+              value: primary
+            - label: Secondary
+              value: secondary
+            - label: Highlight
+              value: highlight
+            - label: Neutral
+              value: neutral
+        description: Card color theme
+      - name: button
+        label: Button
+        component: button
+
+  # --------------------------------------------------------------------------
+  # Navigation
+  # --------------------------------------------------------------------------
+
+  flexible_link:
+    type: block
+    blockKey: type
+    description: Link that can reference an internal page or external URL
+    blocks:
+      - name: internal
+        label: Internal Page Link
+        fields:
+          - name: pageRef
+            label: Page Reference
+            type: reference
+            required: true
+            options:
+              collection: pages
+              value: '/{permalink}'
+              label: '{title} (/{permalink})'
+            description: Select a page from the pages collection
+
+      - name: external
+        label: External Link
+        fields:
+          - name: url
+            label: External URL
+            type: string
+            required: true
+            description: Full URL (e.g. https://example.com)
+            pattern:
+              message: 'Must be a valid URL starting with http:// or https://'
+              regex: '^https?://.+'
+
+  navigation_menu_item:
+    type: block
+    blockKey: type
+    description: Navigation item that can be a single link or a dropdown menu with multiple links
+    blocks:
+      - name: link
+        label: Single Link
+        fields:
+          - name: label
+            label: Link Label
+            type: string
+            required: true
+            description: Text displayed for the link
+          - name: link
+            label: Link
+            component: flexible_link
+            required: true
+            description: A single navigation link
+          - name: description
+            label: Description
+            type: string
+            description: Optional description for accessibility
+
+      - name: dropdown
+        label: Dropdown Menu
+        fields:
+          - name: label
+            label: Menu Label
+            type: string
+            required: true
+            description: Text displayed for the dropdown menu
+          - name: children
+            label: Menu Links
+            type: object
+            list: true
+            required: true
+            description: List of links in the dropdown menu
+            fields:
+              - name: label
+                label: Link Label
+                type: string
+                required: true
+              - name: link
+                label: Link
+                component: flexible_link
+                required: true
+              - name: description
+                label: Description
+                type: string
+                description: Optional description for accessibility
+
+  # --------------------------------------------------------------------------
+  # Layout
+  # --------------------------------------------------------------------------
+
+  background_select:
+    type: object
+    fields:
+      - name: bgColor
+        label: Color
+        type: select
+        options:
+          values:
+            - label: White
+              value: white
+            - label: Gray
+              value: gray
+            - label: Gradient
+              value: gradient
+        default: white
+        description: Select a section background for this section
+      - name: bgType
+        label: Type
+        type: select
+        options:
+          values:
+            - label: Full-width
+              value: full
+            - label: Contained
+              value: contained
+        default: full
+        description: Select the background type for this section
+
+  # --------------------------------------------------------------------------
+  # Section components
+  # --------------------------------------------------------------------------
+
+  hero_section:
+    type: object
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: subtitle
+        label: Subtitle
+        type: string
+      - name: backgroundImage
+        label: Background Image
+        type: image
+        description: Optional hero background image
+
+  richtext_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: withTOC
+        label: Include Table of Contents
+        type: boolean
+        default: false
+      - name: content
+        label: Content
+        type: rich-text
+        required: true
+        description: Markdown content for this section
+
+  button_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: title
+        label: Title (Optional)
+        type: string
+        required: false
+      - name: buttons
+        label: Buttons
+        component: button
+        list: true
+
+  card_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: rich-text
+      - name: cards
+        label: Cards
+        component: card
+        list: true
+        description: Grid of content cards
+      - name: buttons
+        label: Action Buttons
+        component: button
+        list: true
+        description: Buttons at the bottom of the section
+
+  flexi_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: rich-text
+      - name: sections
+        label: Nested Sections
+        component: section
+        list: true
+        description: Nested sections within this flexi section
+
+  # Subset of section types allowed inside flexi sections
+  section:
+    type: block
+    blockKey: type
+    description: Add and arrange page sections in any order
+    blocks:
+      - name: richText
+        label: Rich Text Section
+        component: richtext_section
+      - name: button
+        label: Button Section
+        component: button_section
+      - name: card
+        label: Card Section
+        component: card_section
+
+  people_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: category
+        label: Category
+        type: string
+        description: Filter people by section/department (e.g. "Engineering", "Leadership"). Leave empty to show all people.
+
+  partners_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: category
+        label: Category
+        type: string
+        description: Filter partners by category (e.g. "sponsor", "technology"). Leave empty to show all partners.
+
+  articles_roll_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: title
+        label: Title
+        type: string
+        default: Latest Articles
+      - name: limit
+        label: Number of Articles
+        type: number
+        default: 3
+        description: How many articles to show (1-12)
+      - name: category
+        label: Category Filter
+        type: string
+        description: Only show articles from this category. Leave empty to show all.
+      - name: showViewAll
+        label: Show "View All" Button
+        type: boolean
+        default: true
+        description: Display a link to the full articles page
+
+  featured_partners_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: title
+        label: Title
+        type: string
+      - name: description
+        label: Description
+        type: rich-text
+      - name: partners
+        label: Specific Partners
+        type: string
+        list: true
+        description: Partner IDs to feature. Leave empty to auto-select.
+      - name: limit
+        label: Limit
+        type: number
+        default: 4
+        description: Max number of partners to show
+      - name: showViewAll
+        label: Show "View All" Button
+        type: boolean
+        default: false
+
+  resources_roll_section:
+    type: object
+    fields:
+      - name: background
+        label: Section Background
+        component: background_select
+      - name: title
+        label: Title
+        type: string
+        default: Resources
+      - name: description
+        label: Description
+        type: rich-text
+      - name: limit
+        label: Number of Resources
+        type: number
+        default: 3
+        description: How many resources to show (1-12)
+      - name: showViewAll
+        label: Show "View All" Button
+        type: boolean
+        default: false
+        description: Display a link to the full resources page
+
+# ============================================================================
+# CONTENT COLLECTIONS
+# ============================================================================
+content:
+  # --------------------------------------------------------------------------
+  # Pages
+  # --------------------------------------------------------------------------
+  - name: pages
+    label: Pages
+    type: collection
+    path: src/content/pages
+    format: yaml
+    filename: '{fields.permalink}.yaml'
+    view:
+      fields: [title, description, status]
+      primary: title
+    fields:
+      - name: title
+        label: Page Title
+        type: string
+        required: true
+        description: The title of the page
+
+      - name: permalink
+        label: Permalink
+        type: string
+        description: The slug, without slashes or parents, like 'about-us' or 'omg-3'.
+        pattern:
+          {
+            message: "This must be a web-safe string like 'about-us' or 'omg-3'.",
+            regex: '^[a-zA-Z0-9_-]*$',
+          }
+        required: true
+
+      - name: status
+        label: Status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - label: Draft
+              value: draft
+            - label: Published
+              value: published
+            - label: Archived
+              value: archived
+        description: Draft content is only visible in development/preview. New content defaults to Draft.
+
+      - name: description
+        label: Page Description
+        type: rich-text
+        description: SEO meta description
+
+      - name: heroImage
+        label: Hero Image
+        type: image
+        description: Background image for the page hero section
+
+      - name: background
+        label: Page Background
+        type: select
+        default: white
+        options:
+          values:
+            - label: White
+              value: white
+            - label: Gray
+              value: gray
+            - label: Gradient
+              value: gradient
+            - label: Highlight
+              value: highlight
+        description: Default background style for the page
+
+      - name: sections
+        label: Page Sections
+        type: block
+        list: true
+        required: true
+        blockKey: type
+        description: Add and arrange page sections in any order
+        blocks:
+          - name: hero
+            label: Hero Section
+            component: hero_section
+
+          - name: richText
+            label: Rich Text Section
+            component: richtext_section
+
+          - name: button
+            label: Button Section
+            component: button_section
+
+          - name: card
+            label: Card Section
+            component: card_section
+
+          - name: people
+            label: People Section
+            component: people_section
+
+          - name: partners
+            label: Partners Section
+            component: partners_section
+
+          - name: articlesRoll
+            label: Articles Roll Section
+            component: articles_roll_section
+
+          - name: featuredPartners
+            label: Featured Partners Section
+            component: featured_partners_section
+
+          - name: resourcesRoll
+            label: Resources Roll Section
+            component: resources_roll_section
+
+          - name: flexi
+            label: Flexi Section
+            component: flexi_section
+
+  # --------------------------------------------------------------------------
+  # Articles
+  # --------------------------------------------------------------------------
+  - name: articles
+    label: Articles
+    type: collection
+    path: src/content/articles
+    filename: '{fields.permalink}.md'
+    view:
+      fields: [heroImage, title, publishedDate, status]
+      primary: title
+      sort: [publishedDate, title]
+      default:
+        sort: publishedDate
+        order: desc
+    fields:
+      - name: permalink
+        label: Permalink
+        type: string
+        required: true
+        description: URL-friendly identifier (e.g. my-article-title)
+        pattern:
+          {
+            message: "Must be a web-safe string like 'my-article-title'.",
+            regex: '^[a-zA-Z0-9_-]*$',
+          }
+
+      - name: title
+        label: Title
+        type: string
+        required: true
+        description: Article title
+
+      - name: excerpt
+        label: Excerpt
+        type: string
+        description: Short summary of the article
+
+      - name: authors
+        label: Authors
+        type: reference
+        options:
+          collection: people
+          multiple: true
+          value: "{id}"
+          label: "{fields.name}"
+
+      - name: status
+        label: Status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - label: Draft
+              value: draft
+            - label: Published
+              value: published
+            - label: Archived
+              value: archived
+        description: Draft content is only visible in development/preview. New content defaults to Draft.
+
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        required: true
+        description: Article tags/categories
+
+      - name: publishedDate
+        label: Published Date
+        type: date
+        options:
+          format: yyyy-MM-dd
+        required: true
+        description: Date the article was published
+
+      - name: heroImage
+        label: Hero Image
+        type: image
+        description: Featured image for the article
+
+      - name: relatedArticles
+        label: Related Articles
+        type: reference
+        description: Select up to 3 related articles
+        options:
+          collection: articles
+          multiple: true
+          value: "{permalink}"
+          label: "{title}"
+          image: "{fields.heroImage}"
+
+      - name: categories
+        label: Categories
+        type: select
+        options:
+          multiple: true
+          fetch:
+            url: https://scaffold.draftlab.org/api/categories.json
+            results: articles.categories
+            value: "{name}"
+            label: "{name}"
+
+      - name: body
+        label: Body
+        type: rich-text
+
+  # --------------------------------------------------------------------------
+  # Docs
+  # --------------------------------------------------------------------------
+  - name: docs
+    label: Docs
+    type: collection
+    path: src/content/docs
+    filename: '{fields.permalink}.md'
+    view:
+      fields: [title, chapter, order, status]
+      primary: title
+      sort: [chapterOrder, order]
+      default:
+        sort: chapterOrder
+        order: asc
+    fields:
+      - name: permalink
+        label: Permalink
+        type: string
+        required: true
+        description: URL-friendly identifier (e.g. getting-started)
+        pattern:
+          message: "Must be a web-safe string like 'my-doc-page'."
+          regex: '^[a-zA-Z0-9_-]*$'
+
+      - name: title
+        label: Title
+        type: string
+        required: true
+
+      - name: chapter
+        label: Chapter
+        type: string
+        required: true
+        description: Chapter name this page belongs to (e.g. "Getting Started")
+
+      - name: chapterOrder
+        label: Chapter Order
+        type: number
+        required: true
+        description: Order of this chapter in the sidebar (1, 2, 3...)
+
+      - name: order
+        label: Page Order
+        type: number
+        required: true
+        description: Order within the chapter (1, 2, 3...)
+
+      - name: status
+        label: Status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - label: Draft
+              value: draft
+            - label: Published
+              value: published
+            - label: Archived
+              value: archived
+
+      - name: description
+        label: Description
+        type: string
+        description: Brief description of this page
+
+      - name: body
+        label: Body
+        type: rich-text
+
+  # --------------------------------------------------------------------------
+  # People
+  # --------------------------------------------------------------------------
+  - name: people
+    label: People
+    type: collection
+    path: src/content/people
+    format: json
+    filename: '{fields.id}.json'
+    subfolders: false
+    view:
+      fields: [headshot, name, title, status]
+      primary: name
+    fields:
+      - name: id
+        label: ID
+        type: string
+        required: true
+        description: Unique identifier (slug format, e.g. john-doe)
+
+      - name: name
+        label: Name
+        type: string
+        required: true
+
+      - name: status
+        label: Status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - label: Draft
+              value: draft
+            - label: Published
+              value: published
+            - label: Archived
+              value: archived
+        description: Draft content is only visible in development/preview. New content defaults to Draft.
+
+      - name: headshot
+        label: Headshot
+        type: image
+        required: true
+        description: Absolute path from root (e.g. /src/assets/people/john-doe.png)
+
+      - name: title
+        label: Job Title / Role
+        type: string
+
+      - name: affiliation
+        label: Affiliation
+        type: string
+
+      - name: extraInfo
+        label: Other/Previous Affiliations
+        type: string
+
+      - name: url
+        label: Link
+        type: string
+        description: Optional external link
+
+      - name: sections
+        label: Sections/Departments
+        type: select
+        required: true
+        options:
+          multiple: true
+          fetch:
+            url: https://scaffold.draftlab.org/api/categories.json
+            results: people.categories
+            value: "{name}"
+            label: "{name}"
+
+  # --------------------------------------------------------------------------
+  # Partners
+  # --------------------------------------------------------------------------
+  - name: partners
+    label: Partners
+    type: collection
+    path: src/content/partners
+    format: json
+    filename: '{fields.id}.json'
+    subfolders: false
+    view:
+      fields: [image, name, affiliation, category, status]
+      sort: [category, name]
+      search: [name, affiliation]
+      primary: name
+    fields:
+      - name: id
+        label: ID
+        type: string
+        required: true
+        description: Unique identifier (slug format, e.g. tech-corp)
+
+      - name: name
+        label: Partner Name
+        type: string
+        required: true
+
+      - name: status
+        label: Status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - label: Draft
+              value: draft
+            - label: Published
+              value: published
+            - label: Archived
+              value: archived
+        description: Draft content is only visible in development/preview. New content defaults to Draft.
+
+      - name: affiliation
+        label: Affiliation
+        type: string
+        description: e.g. "Platinum Sponsor", "Technology Partner"
+
+      - name: url
+        label: Website URL
+        type: string
+        description: Partner's website URL
+
+      - name: category
+        label: Category
+        type: select
+        required: true
+        options:
+          multiple: false
+          fetch:
+            url: https://scaffold.draftlab.org/api/categories.json
+            results: partners.categories
+            value: "{name}"
+            label: "{name}"
+
+      - name: image
+        label: Logo
+        type: image
+        description: Absolute path to partner logo (e.g. /src/assets/partners/logo.png)
+
+      - name: order
+        label: Display Order
+        type: number
+        default: 999
+        description: Lower numbers appear first (1, 2, 3...)
+
+      - name: featured
+        label: Featured
+        type: boolean
+        default: false
+        description: Show this partner in featured sections
+
+  # --------------------------------------------------------------------------
+  # Resources
+  # --------------------------------------------------------------------------
+  - name: resources
+    label: Resources
+    type: collection
+    path: src/content/resources
+    format: json
+    filename: '{fields.id}.json'
+    subfolders: false
+    view:
+      fields: [title, category, year, status]
+      sort: [year, title]
+      search: [title, authors, description]
+      primary: title
+    fields:
+      - name: id
+        label: ID
+        type: string
+        required: true
+        description: Unique identifier (e.g. 2024-api-design-guide)
+
+      - name: title
+        label: Title
+        type: string
+        required: true
+
+      - name: status
+        label: Status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - label: Draft
+              value: draft
+            - label: Published
+              value: published
+            - label: Archived
+              value: archived
+        description: Draft content is only visible in development/preview. New content defaults to Draft.
+
+      - name: description
+        label: Description
+        type: rich-text
+        description: Brief summary of the resource (supports markdown)
+
+      - name: authors
+        label: Authors
+        type: string
+        description: Citation string (e.g. "Jane Doe, John Smith")
+
+      - name: contributors
+        label: Contributors
+        type: reference
+        options:
+          collection: people
+          required: false
+          multiple: true
+          value: '{id}'
+          label: '{fields.name}'
+        description: Link to people in the team
+
+      - name: year
+        label: Year
+        type: number
+        required: true
+        description: Publication year
+
+      - name: category
+        label: Category
+        type: select
+        required: true
+        options:
+          multiple: false
+          fetch:
+            url: https://scaffold.draftlab.org/api/categories.json
+            results: resources.categories
+            value: "{name}"
+            label: "{name}"
+
+      - name: externalLinks
+        label: External Links
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Label
+            type: string
+            required: true
+          - name: url
+            label: URL
+            type: string
+            required: true
+            description: Full URL (e.g. https://example.com/paper.pdf)
+
+      - name: publishedDate
+        label: Published Date
+        type: date
+        options:
+          format: yyyy-MM-dd
+        description: Exact publication date (optional, year is used for sorting)
+
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+
+  # --------------------------------------------------------------------------
+  # Categories
+  # --------------------------------------------------------------------------
+  - name: categories
+    label: Categories
+    type: collection
+    path: src/content/categories
+    format: json
+    filename: '{fields.id}.json'
+    subfolders: false
+    view:
+      fields: [name, id]
+      primary: name
+    fields:
+      - name: id
+        label: ID
+        type: string
+        required: true
+        description: Unique identifier (e.g. people, partners, articles, resources)
+
+      - name: name
+        label: Name
+        type: string
+        required: true
+        description: Display name for this category group
+
+      - name: categories
+        label: Categories
+        type: string
+        list: true
+        required: true
+
+  # --------------------------------------------------------------------------
+  # Site Settings (singleton)
+  # --------------------------------------------------------------------------
+  - name: site-config
+    label: Site Settings
+    type: file
+    path: src/content/site/config.json
+    fields:
+      - name: title
+        label: Site Title
+        type: string
+        required: true
+        description: The name of your website
+
+      - name: description
+        label: Site Description
+        type: string
+        required: true
+        description: Default meta description for SEO
+
+      - name: url
+        label: Site URL
+        type: string
+        required: true
+        description: Your website's URL (e.g. https://example.com)
+
+      - name: favicon
+        label: Favicon Path
+        type: string
+        default: /favicon.svg
+        description: Path to your favicon file
+
+      - name: defaultOgImage
+        label: Default Open Graph Image
+        type: image
+        description: Default image for social media sharing
+
+      - name: defaultLogoLight
+        label: Logo (Light Background)
+        type: image
+        description: Site logo for use on light backgrounds
+
+      - name: defaultLogoDark
+        label: Logo (Dark Background)
+        type: image
+        description: Site logo for use on dark backgrounds
+
+      - name: defaultLogoSquare
+        label: Logo (Square)
+        type: image
+        description: Square logo used for OG image badges and favicons
+
+      - name: social
+        label: Social Media Links
+        type: object
+        fields:
+          - name: bluesky
+            label: BlueSky URL
+            type: string
+            description: Full URL to your Bluesky profile
+          - name: mastodon
+            label: Mastodon URL
+            type: string
+            description: Full URL to your Mastodon profile
+          - name: github
+            label: GitHub URL
+            type: string
+            description: Full URL to your GitHub profile or organization
+          - name: linkedin
+            label: LinkedIn URL
+            type: string
+            description: Full URL to your LinkedIn profile or company page
+          - name: x
+            label: X URL
+            type: string
+            description: Full URL to your X profile
+          - name: facebook
+            label: Facebook URL
+            type: string
+            description: Full URL to your Facebook page
+          - name: instagram
+            label: Instagram URL
+            type: string
+            description: Full URL to your Instagram profile
+          - name: youtube
+            label: YouTube URL
+            type: string
+            description: Full URL to your YouTube channel
+
+      - name: footer
+        label: Footer
+        type: object
+        fields:
+          - name: description
+            label: Footer Description
+            type: string
+          - name: bottom
+            label: Bottom Text
+            type: string
+            required: true
+            description: Text shown at the bottom of the footer (supports markdown links)
+
+      - name: archivedBanner
+        label: Archived Banner
+        type: object
+        description: Banner shown on archived content pages. Leave empty to disable.
+        fields:
+          - name: message
+            label: Message
+            type: string
+            required: true
+            description: Text displayed in the archived page banner
+          - name: color
+            label: Color
+            type: select
+            required: true
+            default: secondary
+            options:
+              values:
+                - label: Primary
+                  value: primary
+                - label: Secondary
+                  value: secondary
+                - label: Highlight
+                  value: highlight
+                - label: Neutral
+                  value: neutral
+            description: Color palette for the banner
+
+      - name: cookieConsent
+        label: Cookie Consent
+        type: object
+        description: Cookie banner and analytics settings. Leave empty to disable.
+        fields:
+          - name: message
+            label: Banner Message
+            type: rich-text
+            required: true
+            description: Message shown in the cookie consent banner (supports markdown)
+          - name: googleAnalyticsId
+            label: Google Analytics Measurement ID
+            type: string
+            description: "GA4 Measurement ID (e.g. G-XXXXXXXXXX). Leave empty to disable analytics."
+
+  # --------------------------------------------------------------------------
+  # Navigation Menus
+  # --------------------------------------------------------------------------
+  - name: navigation
+    label: Navigation Menus
+    type: collection
+    path: src/content/navigation
+    format: json
+    filename: '{{fields.slug}}.json'
+    subfolders: false
+    view:
+      fields: [title]
+      primary: title
+    fields:
+      - name: slug
+        label: Menu ID
+        type: string
+        required: true
+        description: Unique identifier for this menu (e.g. main, footer-1, footer-2)
+        pattern:
+          {
+            message: "Must be a web-safe string like 'main' or 'footer-1'.",
+            regex: '^[a-zA-Z0-9_-]*$',
+          }
+
+      - name: title
+        label: Menu Title
+        type: string
+        required: true
+        description: Display title for this menu
+
+      - name: items
+        label: Menu Items
+        component: navigation_menu_item
+        list: true
+        required: true

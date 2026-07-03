@@ -1,0 +1,22 @@
+{
+  "id": "state-of-frontend-2024",
+  "title": "State of Digital Rights Technology 2024",
+  "status": "published",
+  "description": "Annual report analyzing the landscape of privacy tools, encrypted communications, and open source civic technology. Based on survey data from 120 public interest technology organizations worldwide.",
+  "authors": "Priya Sharma, Alex Turner",
+  "contributors": ["priya-sharma", "alex-turner"],
+  "year": 2024,
+  "category": "report",
+  "externalLinks": [
+    {
+      "label": "View Report",
+      "url": "https://example.com/state-of-digital-rights-2024"
+    },
+    {
+      "label": "Raw Data",
+      "url": "https://example.com/state-of-digital-rights-2024-data"
+    }
+  ],
+  "publishedDate": "2024-09-01",
+  "tags": ["digital-rights", "privacy-tools", "survey"]
+}

@@ -1,0 +1,121 @@
+---
+import Button from '@components/atoms/Button.astro';
+import Image from '@components/atoms/Image.astro';
+import Card from '@components/molecules/Card.astro';
+import SectionLayout from '@layouts/SectionLayout.astro';
+import { renderMarkdown } from '@utils/renderMarkdown';
+import type { ImageMetadata } from 'astro';
+
+export interface ButtonType {
+  variant: string;
+  size: string;
+  href: string;
+	text: string
+}
+
+export interface CardType {
+  title: string;
+  content?: string;
+  image?: ImageMetadata;
+  button?: ButtonType;
+  color?: string;
+}
+
+export interface Props {
+  title: string;
+  description?: string;
+  cards?: CardType[];
+  buttons?: ButtonType[];
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  cards = [],
+  buttons = [],
+  class: className = '',
+} = Astro.props;
+
+// Render markdown for description and card content
+const descriptionHtml = description ? (await renderMarkdown(description)).html : '';
+const cardsWithHtml = await Promise.all(
+  cards.map(async (card) => ({
+    ...card,
+    contentHtml: card.content ? (await renderMarkdown(card.content)).html : '',
+  }))
+);
+---
+
+<SectionLayout>
+	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+		<!-- Section Header -->
+		<div class="mb-12 text-center">
+			<h2 class="mb-4">{title}</h2>
+			{
+				descriptionHtml && (
+					<div class="m-auto prose" set:html={descriptionHtml} />
+				)
+			}
+		</div>
+
+		<!-- Cards Grid -->
+		{
+			cards.length > 0 && (
+				<div
+					class={`mb-12 grid gap-6 sm:grid-cols-2 ${cards.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}
+				>
+					{cardsWithHtml.map((card) => (
+						<Card variant="bordered" padding="md" color={card.color}>
+							{card.image && (
+								<div class="mb-4">
+									<Image
+										src={card.image}
+										alt={card.title}
+										width={400}
+										height={300}
+										class="h-48 w-full rounded-lg object-cover"
+									/>
+								</div>
+							)}
+							<h3 class="mb-3">{card.title}</h3>
+							{card.contentHtml && (
+								<div class="prose mb-4" set:html={card.contentHtml} />
+							)}
+							{card.button && (
+								<Button
+									type="button"
+									as="a"
+									variant={card.button.variant as any}
+									size={card.button.size as any}
+									href={card.button.href}
+								>
+									{card.button.text}
+								</Button>
+							)}
+						</Card>
+					))}
+				</div>
+			)
+		}
+
+		<!-- Action Buttons -->
+		{
+			buttons.length > 0 && (
+				<div class="flex flex-wrap justify-center gap-4">
+					{buttons.map((button) => (
+						<Button
+							type="button"
+							as="a"
+							variant={button.variant as any}
+							size={button.size as any}
+							href={button.href}
+						>
+							{button.text}
+						</Button>
+					))}
+				</div>
+			)
+		}
+	</div>
+</SectionLayout>

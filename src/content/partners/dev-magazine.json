@@ -1,0 +1,10 @@
+{
+  "id": "dev-magazine",
+  "name": "The Lighthouse Report",
+  "affiliation": "Investigative Tech Journalism",
+  "url": "https://lighthousereport.example.org",
+  "category": "media",
+  "image": "/src/assets/partners/rings-6.png",
+  "order": 7,
+  "status": "published"
+}

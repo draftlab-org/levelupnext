@@ -1,0 +1,77 @@
+---
+import IconInformationCircle from '~icons/heroicons/information-circle-20-solid';
+import IconExclamationTriangle from '~icons/heroicons/exclamation-triangle-20-solid';
+import IconCheckCircle from '~icons/heroicons/check-circle-20-solid';
+import IconXCircle from '~icons/heroicons/x-circle-20-solid';
+import IconXMark from '~icons/heroicons/x-mark-20-solid';
+
+export interface Props {
+  variant?: 'info' | 'warning' | 'success' | 'error';
+  dismissible?: boolean;
+  class?: string;
+  id?: string;
+}
+
+const {
+  variant = 'info',
+  dismissible = false,
+  class: className = '',
+  id,
+  ...props
+} = Astro.props;
+
+const iconMap = {
+  info: IconInformationCircle,
+  warning: IconExclamationTriangle,
+  success: IconCheckCircle,
+  error: IconXCircle,
+};
+
+const Icon = iconMap[variant];
+
+const variants = {
+  info: 'bg-secondary-100 text-secondary-800 border-secondary-200',
+  warning: 'bg-primary-100 text-primary-800 border-primary-200',
+  success: 'bg-green-100 text-green-800 border-green-200',
+  error: 'bg-highlight-100 text-highlight-800 border-highlight-200',
+};
+
+const iconVariants = {
+  info: 'text-secondary-500',
+  warning: 'text-primary-600',
+  success: 'text-green-500',
+  error: 'text-highlight-500',
+};
+
+const bannerId = id || `banner-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div
+	id={bannerId}
+	class={`relative border-b px-4 py-3 ${variants[variant]} ${className}`}
+	role="alert"
+	{...props}
+>
+	<div class="mx-auto flex max-w-7xl items-center justify-center gap-3">
+		<span class={`shrink-0 ${iconVariants[variant]}`}>
+			<Icon class="h-5 w-5" />
+		</span>
+
+		<div class="flex-1 text-sm font-medium">
+			<slot />
+		</div>
+
+		{
+			dismissible && (
+				<button
+					type="button"
+					class="shrink-0 rounded p-1 transition-colors hover:bg-black/10 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+					aria-label="Dismiss"
+					onclick={`document.getElementById('${bannerId}')?.remove()`}
+				>
+					<IconXMark className="h-5 w-5" />
+				</button>
+			)
+		}
+	</div>
+</div>

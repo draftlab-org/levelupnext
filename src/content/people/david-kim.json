@@ -1,0 +1,13 @@
+{
+  "id": "david-kim",
+  "name": "David Kim",
+  "headshot": "/src/assets/people/david-kim.png",
+  "title": "Open Source Developer",
+  "affiliation": "Community Signal Lab",
+  "extraInfo": "Develops community-owned platforms for local organizing",
+  "sections": [
+    "Engineering",
+    "Community"
+  ],
+  "status": "published"
+}

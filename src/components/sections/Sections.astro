@@ -1,0 +1,120 @@
+---
+import ArticlesRollSection from '@components/sections/ArticlesRollSection.astro';
+import ButtonSection from '@components/sections/ButtonSection.astro';
+import CardSection from '@components/sections/CardSection.astro';
+import FeaturedPartnersSection from '@components/sections/FeaturedPartnersSection.astro';
+import FlexiSection from '@components/sections/FlexiSection.astro';
+import HeroSection from '@components/sections/HeroSection.astro';
+import PartnersSection from '@components/sections/PartnersSection.astro';
+import PeopleSection from '@components/sections/PeopleSection.astro';
+import ResourcesRollSection from '@components/sections/ResourcesRollSection.astro';
+import RichTextSection from '@components/sections/RichTextSection.astro';
+import SectionLayout from '@layouts/SectionLayout.astro';
+
+const { sectionItems } = Astro.props;
+
+---
+
+{
+  sectionItems.map((section: any) => {
+    const sectionLabel = `section > ${section.type}`;
+
+    const content = (() => {
+      switch (section.type) {
+        case 'button':
+          return (
+            <ButtonSection
+              title={section.title}
+              buttons={section.buttons}
+            />
+          );
+        case 'flexi':
+          return (
+            <FlexiSection
+              title={section.title}
+              description={section.description}
+              sections={section.sections}
+            />
+          );
+        case 'hero':
+          return (
+            <HeroSection
+              title={section.title}
+              subtitle={section.subtitle}
+            />
+          );
+        case 'richText':
+          return (
+            <RichTextSection
+              content={section.content}
+              withTOC={section.withTOC}
+            />
+          );
+        case 'card':
+          return (
+            <CardSection
+              title={section.title}
+              description={section.description}
+              cards={section.cards}
+              buttons={section.buttons}
+            />
+          );
+        case 'people':
+          return (
+            <PeopleSection
+              category={section.category}
+            />
+          );
+        case 'partners':
+          return (
+            <PartnersSection
+              title={section.title}
+              category={section.category}
+            />
+          );
+        case 'articlesRoll':
+          return (
+            <ArticlesRollSection
+              title={section.title}
+              limit={section.limit}
+              category={section.category}
+              showViewAll={section.showViewAll}
+            />
+          );
+        case 'featuredPartners':
+          return (
+            <FeaturedPartnersSection
+              title={section.title}
+              description={section.description}
+              partners={section.partners}
+              limit={section.limit}
+              showViewAll={section.showViewAll}
+            />
+          );
+        case 'resourcesRoll':
+          return (
+            <ResourcesRollSection
+              title={section.title}
+              description={section.description}
+              limit={section.limit}
+              showViewAll={section.showViewAll}
+            />
+          );
+        default:
+          return null;
+      }
+    })();
+
+    return (
+      <SectionLayout
+        bgColor={section.background?.bgColor}
+        bgType={section.background?.bgType}
+        bgImage={section.backgroundImage}
+        class={section.class}
+        sectionLabel={sectionLabel}
+      >
+        {content}
+      </SectionLayout>
+    );
+  })
+}

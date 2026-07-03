@@ -1,0 +1,15 @@
+---
+import Hero from '@components/organisms/Hero.astro';
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+	background?: 'white' | 'gray' | 'gradient' | 'highlight';
+}
+
+const { title, subtitle, background='white' } = Astro.props;
+---
+
+<Hero title={title} subtitle={subtitle} background={background}>
+	<slot />
+</Hero>

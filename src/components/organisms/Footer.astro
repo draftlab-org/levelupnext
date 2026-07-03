@@ -1,0 +1,134 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import Link from '@components/atoms/Link.astro';
+import SocialLinks from '@components/molecules/SocialLinks.astro';
+import { isExternalLink, resolveFlexibleLink } from '@utils/navigation';
+import { renderMarkdown } from '@utils/renderMarkdown';
+
+// Fetch all data internally - no props needed except className
+export interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
+// Fetch site config
+const siteConfigEntry = await getEntry('site', 'config');
+if (!siteConfigEntry) {
+  throw new Error('Site configuration not found');
+}
+const siteConfig = siteConfigEntry.data;
+
+// Fetch footer navigation menus
+const footerNav1 = await getEntry('navigation', 'footer-1');
+const footerNav2 = await getEntry('navigation', 'footer-2');
+
+// Prepare description with fallback logic
+const description = siteConfig.footer?.description || siteConfig.description;
+
+// Prepare copyright
+const currentYear = new Date().getFullYear();
+const copyrightText = `© ${currentYear} ${siteConfig.title}.`;
+
+// Render footer bottom content
+const { html: footerBottomHtml } = await renderMarkdown(siteConfig.footer.bottom);
+---
+
+<footer class={`bg-gray-950 text-white ${className}`}>
+	<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+		<!-- Main footer content: 3 columns on desktop, stack on mobile -->
+		<div class="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+			<!-- Left side: Content Section (50% on desktop) -->
+			<div class="space-y-6">
+				<!-- Logo -->
+				<div>
+					{
+						siteConfig.defaultLogoDark ? (
+							<Image
+								src={siteConfig.defaultLogoDark}
+								alt={siteConfig.title}
+								class="h-12 w-auto"
+							/>
+						) : (
+							<Link
+								href="/"
+								variant="unstyled"
+								class="font-serif text-2xl font-bold text-white"
+							>
+								{siteConfig.title}
+							</Link>
+						)
+					}
+				</div>
+
+				<!-- Description -->
+				<p class="max-w-md text-white/80">
+					{description}
+				</p>
+
+				<!-- Social Links -->
+				<SocialLinks class="justify-start" iconClass="w-5 h-5" />
+			</div>
+
+			<!-- Right side: Two menu sections (25% each on desktop) -->
+			<div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
+				<!-- Menu Section 1 -->
+				{
+					footerNav1 && (
+						<div>
+							<h3 class="mb-4 font-semibold">{footerNav1.data.title}</h3>
+							<ul class="space-y-3">
+								{footerNav1.data.items.map((item) => {
+									// Only render link items in footer (no dropdowns)
+									if (item.type !== 'link') return null;
+									const href = resolveFlexibleLink(item.link);
+									const external = isExternalLink(item.link);
+									return (
+										<li>
+											<Link href={href} variant="footer" external={external}>
+												{item.label}
+											</Link>
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					)
+				}
+
+				<!-- Menu Section 2 -->
+				{
+					footerNav2 && (
+						<div>
+							<h3 class="mb-4 font-semibold">{footerNav2.data.title}</h3>
+							<ul class="space-y-3">
+								{footerNav2.data.items.map((item) => {
+									// Only render link items in footer (no dropdowns)
+									if (item.type !== 'link') return null;
+									const href = resolveFlexibleLink(item.link);
+									const external = isExternalLink(item.link);
+									return (
+										<li>
+											<Link href={href} variant="footer" external={external}>
+												{item.label}
+											</Link>
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					)
+				}
+			</div>
+		</div>
+
+		<!-- Bottom Section: Copyright and footer content -->
+		<div class="border-t border-white/10 pt-8">
+			<div class="space-y-2 text-center *:text-sm">
+				<p class="">{copyrightText}</p>
+				<div class="*:text-sm [&_a]:text-white" set:html={footerBottomHtml} />
+			</div>
+		</div>
+	</div>
+</footer>

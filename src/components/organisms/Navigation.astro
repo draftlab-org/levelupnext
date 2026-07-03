@@ -1,0 +1,121 @@
+---
+import Button from '@components/atoms/Button.astro';
+import Link from '@components/atoms/Link.astro';
+import NavItem from '@components/molecules/NavItem.astro';
+import MobileMenu from '@components/organisms/MobileMenu';
+import RichSearch from '@components/organisms/RichSearch';
+import type { NavItem as NavItemType } from '@utils/navigation';
+import { resolveFlexibleLink } from '@utils/navigation';
+import Image from 'astro/components/Image.astro';
+import MagnifyingGlassIcon from '~icons/heroicons/magnifying-glass-20-solid';
+
+export interface Props {
+  items: NavItemType[];
+  currentPath?: string;
+  siteName?: string;
+  class?: string;
+	logo?: ImageMetadata
+}
+
+const {
+  items,
+  currentPath = Astro.url.pathname,
+  siteName = 'Draftlab Scaffold',
+  class: className = '',
+	logo,
+} = Astro.props;
+
+const isActive = (item: NavItemType) => {
+  if (item.type === 'dropdown') {
+    // Check if any child is active
+    return item.children.some((child) => {
+      const href = resolveFlexibleLink(child.link);
+      if (href === '/') return currentPath === '/';
+      return currentPath.startsWith(href);
+    });
+  }
+  const href = resolveFlexibleLink(item.link);
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+};
+---
+
+<nav
+	class={`p-6 w-full bg-white flex justify-between items-center ${className}`}
+>
+	<!-- Left side: Logo + Nav Links -->
+	<div class="flex items-center gap-10">
+		<!-- Logo/Site Name -->
+		<div class="shrink-0">
+			<Link
+				href="/"
+				variant="unstyled"
+				class="font-serif text-2xl font-bold text-gray-900 underline decoration-primary-300 decoration-dotted decoration-4 underline-offset-8"
+				>{
+					logo ? (
+						<Image src={logo} alt={siteName} class="w-45" />
+					) : (
+						<span>{siteName}</span>
+					)
+				}
+			</Link>
+		</div>
+
+		<!-- Navigation Links -->
+		<div class="hidden items-center space-x-1 md:flex">
+			{items.map((item) => <NavItem item={item} active={isActive(item)} currentPath={currentPath} />)}
+		</div>
+	</div>
+
+	<!-- Right side: Actions + Mobile Menu -->
+	<div class="flex items-center gap-4">
+		<!-- Search Button -->
+		<Button
+			variant="outline"
+			size="square"
+			type="button"
+			id="search-button"
+			aria-label="Open Menu"
+		>
+			<MagnifyingGlassIcon />
+		</Button>
+
+		<!-- CTA or Actions Slot -->
+		<slot name="actions" />
+
+		<!-- Mobile Menu -->
+		<div class="md:hidden">
+			<MobileMenu client:load items={items} currentPath={currentPath} />
+		</div>
+	</div>
+</nav>
+
+<!-- Rich Search Modal -->
+<RichSearch client:load />
+
+<script>
+	function setupSearchButton() {
+		const searchButton = document.getElementById('search-button');
+
+		if (searchButton) {
+			searchButton.addEventListener('click', () => {
+				window.dispatchEvent(new CustomEvent('open-search'));
+			});
+		}
+	}
+
+	// Run on initial load and after each View Transition navigation
+	document.addEventListener('astro:page-load', setupSearchButton);
+
+	// Listen for CMD+K or CTRL+K to open search
+	// Use a data attribute to prevent duplicate listeners across View Transitions
+	if (!document.documentElement.dataset.searchKeyboardListener) {
+		document.documentElement.dataset.searchKeyboardListener = 'true';
+		document.addEventListener('keydown', (e) => {
+			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+				e.preventDefault();
+				window.dispatchEvent(new CustomEvent('open-search'));
+			}
+		});
+	}
+</script>

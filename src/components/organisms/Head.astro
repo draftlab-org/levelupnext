@@ -1,0 +1,120 @@
+---
+import { Font } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import { ClientRouter } from "astro:transitions";
+
+// Fetch site config from content collection
+const siteConfigEntry = await getEntry('site', 'config');
+
+const isProd = import.meta.env.PROD;
+
+
+if (!siteConfigEntry) {
+  throw new Error('Site configuration not found');
+}
+
+const siteConfig = siteConfigEntry.data;
+
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: ImageMetadata;
+  canonicalURL?: URL;
+}
+
+const {
+  title,
+  description = siteConfig.description,
+  image,
+  canonicalURL,
+} = Astro.props;
+
+// Build og:image URL — use generated OG PNG when page has a hero image,
+// otherwise fall back to the default site OG image
+let imageURL: string | undefined;
+if (image) {
+  const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+  const ogPath = pathname === '/' ? '/og/index.png' : `/og${pathname}.png`;
+  imageURL = new URL(ogPath, Astro.site || Astro.url).href;
+} else {
+  const fallback = siteConfig.defaultOgImage as ImageMetadata;
+  imageURL = fallback ? new URL(fallback.src, Astro.url).href : undefined;
+}
+
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href={siteConfig.favicon} />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageURL} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalURL} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={imageURL} />
+
+{
+	isProd && (
+		<>
+			{/* Privacy-preserving analytics by self-hosted Umami */}
+			<script
+				is:inline
+				defer
+				src="https://umami.draftlab.dev/script.js"
+				data-performance="true"
+				data-do-not-track="true"
+				data-website-id="16c41e6d-a63d-45d0-9fca-ddcc9d6a279b"
+				transition:persist
+			/>
+			{/* Auto-tag outbound links for Umami. Sweep on DOM ready + each
+			    view transition. */}
+			<script>
+				(function () {
+					if (document.documentElement.dataset.outboundLinkTracker) return;
+					document.documentElement.dataset.outboundLinkTracker = 'true';
+					function tagLink(a:any) {
+						if (!a.host || a.host === window.location.host) return;
+						if (a.dataset.umamiEvent) return;
+						a.dataset.umamiEvent = 'outbound-link-click';
+						a.dataset.umamiEventUrl = a.href;
+					}
+					function tagAll() {
+						document.querySelectorAll('a[href]').forEach(tagLink);
+					}
+					if (document.readyState === 'loading') {
+						document.addEventListener('DOMContentLoaded', tagAll);
+					} else {
+						tagAll();
+					}
+					document.addEventListener('astro:page-load', tagAll);
+				})();
+			</script>
+		</>
+	)
+}
+
+<!-- Local Font Declaration (variables defined in fonts.config.mjs) -->
+<Font cssVariable="--font-serif" preload />
+<Font cssVariable="--font-sans" preload />
+<Font cssVariable="--font-mono" preload />
+
+<ClientRouter />
+
+<!-- Additional head content -->
+<slot />

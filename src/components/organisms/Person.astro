@@ -1,0 +1,48 @@
+---
+import type { InferEntrySchema } from 'astro:content';
+import Heading from '@components/atoms/Heading.astro';
+import Image from '@components/atoms/Image.astro';
+import Text from '@components/atoms/Text.astro';
+
+export type Person = InferEntrySchema<'people'>;
+
+export interface Props {
+  person: Person;
+  class?: string;
+}
+
+const { person, class: className = '' } = Astro.props;
+---
+
+<div class={`text-center ${className}`}>
+	<a
+		href={`/people/${person.id}`}
+		class="block transition-transform hover:scale-105"
+		data-component
+	>
+		<!-- Headshot -->
+		<div class="mb-4 flex justify-center">
+			{
+				person.headshot && (
+					<Image
+						src={person.headshot}
+						alt={person.name}
+						width={200}
+						height={200}
+						class="h-48 w-48 rounded-lg object-cover"
+					/>
+				)
+			}
+		</div>
+
+		<!-- Name -->
+		<Heading level={4} class="mb-2">
+			{person.name}
+		</Heading>
+
+		<!-- Title -->
+		<Text size="sm" class="">
+			{person.title}
+		</Text>
+	</a>
+</div>

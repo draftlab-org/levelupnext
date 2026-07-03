@@ -1,0 +1,13 @@
+{
+  "id": "alex-turner",
+  "name": "Alex Turner",
+  "headshot": "/src/assets/people/alex-turner.png",
+  "title": "Infrastructure Lead",
+  "affiliation": "Open Internet Project",
+  "extraInfo": "Maintains open infrastructure for censorship-resistant communications",
+  "sections": [
+    "Engineering",
+    "Community"
+  ],
+  "status": "published"
+}

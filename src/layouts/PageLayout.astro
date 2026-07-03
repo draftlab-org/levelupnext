@@ -1,0 +1,76 @@
+---
+import { getEntry } from 'astro:content';
+import CookieBanner from '@components/organisms/CookieBanner.astro';
+import Footer from '@components/organisms/Footer.astro';
+import Header from '@components/sections/Header.astro';
+import Main from '@components/sections/Main.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { NavItem } from '@utils/navigation';
+import { convertNavigationItems } from '@utils/navigation';
+
+// Fetch navigation data from content collections
+const mainNav = await getEntry('navigation', 'main');
+
+// Convert navigation data to component format
+const defaultNavItems: NavItem[] = mainNav?.data.items
+  ? convertNavigationItems(mainNav.data.items)
+  : [];
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: ImageMetadata;
+  navItems?: NavItem[];
+  siteName?: string;
+  stickyHeader?: boolean;
+  containerized?: boolean;
+  maxWidth?: 'full' | '7xl' | '6xl' | '5xl' | '4xl';
+  class?: string;
+  padding?: boolean
+}
+
+const {
+  title,
+  description,
+  image,
+  navItems = defaultNavItems,
+  siteName = 'Draftlab Scaffold',
+  stickyHeader = true,
+  containerized = false,
+  padding = false,
+  maxWidth = '7xl',
+  class: className = '',
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description} image={image}>
+	<slot name="head" slot="head" />
+
+	<div class="flex min-h-screen flex-col">
+		<!-- Header -->
+		<Header
+			items={navItems}
+			siteName={siteName}
+			sticky={stickyHeader}
+			transition:persist
+		>
+			<slot name="header-actions" slot="actions" />
+		</Header>
+
+		<!-- Main Content -->
+		<Main
+			containerized={containerized}
+			padding={padding}
+			maxWidth={maxWidth}
+			class={className}
+		>
+			<slot />
+		</Main>
+
+		<!-- Footer -->
+		<Footer class="mt-auto" transition:persist />
+
+		<!-- Cookie Consent Banner -->
+		<CookieBanner />
+	</div>
+</BaseLayout>

@@ -1,0 +1,46 @@
+{
+  "slug": "footer-2",
+  "title": "Footer Nav 2",
+  "items": [
+    {
+      "type": "link",
+      "label": "Menu Item",
+      "link": {
+        "type": "internal",
+        "pageRef": "/about"
+      }
+    },
+    {
+      "type": "link",
+      "label": "Menu Item",
+      "link": {
+        "type": "internal",
+        "pageRef": "/about"
+      }
+    },
+    {
+      "type": "link",
+      "label": "Menu Item",
+      "link": {
+        "type": "internal",
+        "pageRef": "/about"
+      }
+    },
+    {
+      "type": "link",
+      "label": "Menu Item",
+      "link": {
+        "type": "internal",
+        "pageRef": "/about"
+      }
+    },
+    {
+      "type": "link",
+      "label": "Menu Item",
+      "link": {
+        "type": "internal",
+        "pageRef": "/about"
+      }
+    }
+  ]
+}

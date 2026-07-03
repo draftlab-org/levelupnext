@@ -1,0 +1,185 @@
+# Draftlab Scaffold
+
+> A modern website starter built with Astro v7, Tailwind CSS v4, and React v19.
+> Provides a flexible page-building system, type-safe content collections, and
+> an integrated Git-based CMS (PagesCMS). Pre-configured for Netlify deployment.
+
+Scaffold is a template, not a finished site — use it as the starting point
+for your own content-focused website. Once installed, everything is editable
+either by hand (YAML/JSON/Markdown) or through a visual CMS interface. The
+articles, people, partners, and resources that ship with the live demo are
+placeholder content meant to be replaced.
+
+## Quick start
+
+Requires Node.js v22.12+ and Git.
+
+    npx create-astro --template draftlab-org/scaffold
+    cd your-project-name
+    npm install
+    npm run dev
+
+Dev server runs at http://localhost:4321. Build with `npm run build`
+(static output in `dist/`); preview with `npm run preview`.
+
+## Deployment
+
+- Pre-configured for **Netlify** via `@astrojs/netlify`. Connect the repo,
+  push to `main`, done — no extra config.
+- Works with any static host (Vercel, Cloudflare Pages, GitHub Pages) by
+  swapping the adapter in `astro.config.mjs`.
+
+## Updating from upstream
+
+Scaffold is designed to be forked. Downstream sites can pull future Scaffold
+updates without losing content, assets, styles, or branding:
+
+    git remote add template https://github.com/draftlab-org/scaffold.git
+    npm run update-from-scaffold
+
+`scripts/scaffold-update.sh` (wrapped as `npm run update-from-scaffold`):
+
+- Registers the `ours` merge driver in local git config (`merge=ours` in
+  `.gitattributes` is not a built-in driver; without this Git silently falls
+  back to 3-way merge and conflicts every protected file)
+- Fetches `template/main` and merges. First merge after `npx create-astro
+  --template ...` has no shared root, so the script adds
+  `--allow-unrelated-histories -X theirs` — without `-X theirs`, every
+  diverged file becomes an add/add conflict; with it, unprotected files take
+  upstream while protected paths still keep downstream via `merge=ours`
+- Resolves modify/delete conflicts in protected paths by re-applying the
+  downstream deletion (the `merge=ours` driver only handles content conflicts)
+- Auto-removes brand-new upstream files in `src/content/`, `src/assets/`, and
+  `public/` to keep demo content out of production (`src/styles/` is excluded
+  since new stylesheets may be required by new components)
+- If a new directory appears under `src/content/` (indicating a new content
+  collection), prints an alert at end of run pointing to https://scaffold.org
+- Compares `package.json` dependency sections before and after the merge; if
+  they differ, prints an alert reminding the user to run `npm install`
+
+A checked-in `.gitattributes` marks these paths as `merge=ours` (downstream
+always wins on conflict):
+
+- `src/content/**` — content collections
+- `src/assets/**` — uploaded images, logos, artwork
+- `src/styles/**` — theme tokens, typography, component utilities
+- `public/**` — favicons, OG images, robots.txt, branding
+- `fonts.config.mjs` — font choices (see Architecture)
+
+Everything else (components, layouts, utils, `astro.config.mjs`, `package.json`)
+merges normally and consumers receive template improvements.
+
+## Documentation
+
+- [How to use Scaffold](https://scaffold.draftlab.org/how-to-use): Full guide covering installation, page building, content collections, PagesCMS, and deployment
+- [GitHub repository](https://github.com/draftlab-org/scaffold): Source code, issues, releases
+- [README](https://github.com/draftlab-org/scaffold/blob/main/README.md): Install instructions, commands, project structure
+
+## Content model
+
+Content lives in `src/content/` with schemas in `src/content.config.ts`
+(Astro's Content Layer API). Nine collections ship by default:
+
+- **Site** (`src/content/site/config.json`): Singleton with title, description, SEO defaults, social links, cookie consent, archived banners
+- **Pages** (`src/content/pages/*.yaml`): Each file is a route, built from a `sections` array
+- **Navigation** (`src/content/navigation/*.json`): Header and footer menus
+- **Articles** (`src/content/articles/*.md`): Markdown blog posts with frontmatter
+- **Docs** (`src/content/docs/*.md`): Multi-chapter markdown documentation, grouped by `chapter`/`chapterOrder` and sorted by `order`
+- **People** (`src/content/people/*.json`): Team profiles
+- **Partners** (`src/content/partners/*.json`): Organizations with logo, URL, category
+- **Resources** (`src/content/resources/*.json`): Publications, reports, guides
+- **Categories** (`src/content/categories/*.json`): Category definitions used by filters
+
+All collections use a unified `status` field (`draft`, `published`, `archived`).
+Drafts are only visible in `npm run dev` or with `PUBLIC_PREVIEW=true`.
+
+## Page sections
+
+Every page is assembled from sections. Available types:
+
+- `hero` — Full-width banner with title, subtitle, optional background image
+- `richText` — Markdown with optional table of contents
+- `button` — Row of call-to-action buttons
+- `card` — Grid of cards with markdown, images, links
+- `people` — Grid of team profiles, filterable by category
+- `partners` — Grid of partner logos, filterable by category
+- `featuredPartners` — Curated partner row
+- `articlesRoll` — Feed of recent articles
+- `resourcesRoll` — Feed of recent resources
+- `flexi` — Nested container for combining sections
+
+A GitHub Action (`.github/workflows/auto-fix-permalinks.yml`) keeps page
+filenames and `permalink` fields in sync automatically.
+
+## Embedded media in markdown
+
+Any rich-text or markdown body (article and doc bodies, `richText` page
+sections, and PagesCMS rich-text fields) supports embeds via a plain markdown
+link whose text is the literal string `EmbedLink`:
+
+    [EmbedLink](https://www.youtube.com/watch?v=...)
+    [EmbedLink](https://vimeo.com/...)
+    [EmbedLink](https://bsky.app/profile/<handle>/post/<id>)
+    [EmbedLink](https://<instance>/@<user>/<status-id>)
+
+The link must be the sole content of its paragraph. Implemented as a single
+remark plugin (`src/lib/remark-embed-link.ts`) wired into both markdown
+pipelines: Astro's built-in markdown (via `markdown.remarkPlugins` in
+`astro.config.mjs`) and the custom `src/utils/renderMarkdown.ts` processor
+chain. No MDX migration is required.
+
+- **YouTube / Vimeo**: URL→ID transform, rendered as `<lite-youtube>` /
+  `<lite-vimeo>` web components (lazy poster + click-to-load). The
+  `lite-youtube-embed` / `lite-vimeo-embed` modules are registered once in
+  `src/layouts/BaseLayout.astro`.
+- **Bluesky**: fetched at build time from `public.api.bsky.app` (handle
+  resolution + `app.bsky.feed.getPosts`); rendered as a static post card.
+- **Mastodon**: fetched at build time from the source instance's
+  `/api/v1/statuses/:id` endpoint; rendered as a static post card.
+- **Fallback**: any URL that doesn't match a provider, and any failed
+  build-time fetch (deleted post, rate limit, network error), leaves the
+  original link in place and emits a build warning.
+
+Build-time tradeoff: each Bluesky/Mastodon embed is one outbound HTTP request
+during `astro build`. Post edits or deletions only reflect on the next deploy.
+
+To add a provider, extend `buildEmbedHTML()` in `src/lib/remark-embed-link.ts`.
+
+## PagesCMS
+
+Scaffold ships with a complete `.pages.yml` configuration for
+[PagesCMS](https://pagescms.org) — a free, open-source, Git-based CMS.
+
+- Sign in at [app.pagescms.org](https://app.pagescms.org) with GitHub
+- Select your repository; PagesCMS reads `.pages.yml` and configures the editor automatically
+- No API keys, no database, no separate hosting — edits commit directly to your repo and trigger a rebuild
+
+## Architecture
+
+- **Stack**: Astro v7, React v19, Tailwind CSS v4 (Vite plugin), MDX
+- **Components**: Atomic design — `atoms` → `molecules` → `organisms` → `sections`
+- **TypeScript**: Strict mode with path aliases (`@components/*`, `@utils/*`, `@lib/*`, `@content/*`, `@styles/*`, `@layouts/*`, `@assets/*`, `@pages/*`)
+- **Icons**: [unplugin-icons](https://github.com/unplugin/unplugin-icons) + [@iconify/json](https://icon-sets.iconify.design/) — import as `~icons/[collection]/[icon-name]`
+- **Styling**: Tailwind v4 with `@theme` tokens in `src/styles/colors.css`, `typography.css`, `breakpoints.css`
+- **Fonts**: Declared in `fonts.config.mjs` at repo root (split out from `astro.config.mjs` so consumers can swap fonts without conflicting with template updates). Three slots — `--font-sans`, `--font-serif`, `--font-mono` — loaded from [Bunny Fonts](https://fonts.bunny.net) by default. Change a font by editing `name` and `weights` in `fonts.config.mjs`; the CSS variable names should not be renamed.
+
+## API endpoints
+
+All content collections are automatically exposed as JSON at build time via `src/pages/api/[collection].json.ts`:
+
+- `/api/pages.json`
+- `/api/articles.json`
+- `/api/docs.json`
+- `/api/people.json`
+- `/api/partners.json`
+- `/api/resources.json`
+- `/api/navigation.json`
+- `/api/categories.json`
+- `/api/site.json`
+
+## External references
+
+- [Astro documentation](https://docs.astro.build)
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [PagesCMS documentation](https://pagescms.org/docs)
+- [Atomic design principles](https://atomicdesign.bradfrost.com/chapter-2/)
