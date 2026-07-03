@@ -1,5 +1,7 @@
 ---
-// Footer matching the original LevelUp three-column layout.
+import Logo from '@components/levelup/Logo.astro';
+
+// Footer link columns (right side), matching the original LevelUp footer.
 const links: { label: string; href: string; external?: boolean }[][] = [
   [
     { label: 'About LevelUp', href: '/community/about/' },
@@ -17,29 +19,46 @@ const links: { label: string; href: string; external?: boolean }[][] = [
   ],
   [{ label: 'Site Map', href: '/site-map/' }],
 ];
+
+const about =
+  'LevelUp is a living project intended to provide support to, and enable creation of resources and sharing of knowledge within, a growing network of individuals providing needed digital safety training and education to users of technology worldwide.';
 ---
 
 <footer class="lu-footer w-full">
-	<div
-		class="mx-auto flex w-full flex-wrap items-start justify-around gap-8 px-6 py-8 font-serif"
-	>
-		{
-			links.map((col) => (
-				<div class="space-y-2">
-					{col.map((l) => (
-						<p>
-							<a
-								href={l.href}
-								{...(l.external
-									? { target: '_blank', rel: 'noopener noreferrer' }
-									: {})}
-							>
-								{l.label}
-							</a>
-						</p>
-					))}
-				</div>
-			))
-		}
+	<div class="mx-auto w-full max-w-[1320px] px-4 py-10 sm:px-6">
+		<div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+			{/* Left: logo + about */}
+			<div class="max-w-md space-y-4">
+				<a href="/" aria-label="LevelUp home" class="inline-block">
+					<Logo class="h-8 w-auto text-white" />
+				</a>
+				<p class="text-sm leading-relaxed text-white/90">{about}</p>
+			</div>
+
+			{/* Right: link columns */}
+			<nav
+				class="flex flex-wrap gap-x-12 gap-y-6 font-serif"
+				aria-label="Footer"
+			>
+				{
+					links.map((col) => (
+						<div class="space-y-2">
+							{col.map((l) => (
+								<p>
+									<a
+										href={l.href}
+										{...(l.external
+											? { target: '_blank', rel: 'noopener noreferrer' }
+											: {})}
+									>
+										{l.label}
+									</a>
+								</p>
+							))}
+						</div>
+					))
+				}
+			</nav>
+		</div>
 	</div>
 </footer>

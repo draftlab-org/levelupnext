@@ -10,20 +10,22 @@ const isActive = (href: string) =>
 ---
 
 <nav class="lu-nav w-full" aria-label="Main navigation">
-	<ul class="lu-menu">
-		{
-			roots.map((root) => (
-				<li class={isActive(root.href) ? 'active' : ''}>
-					<a href={root.href}>{root.title}</a>
-					{root.children.length > 0 && (
-						<ul>
-							{root.children.map((child) => (
-								<LuNavNode node={child} />
-							))}
-						</ul>
-					)}
-				</li>
-			))
-		}
-	</ul>
+	<div class="lu-nav-inner mx-auto w-full max-w-[1320px] px-4 sm:px-6">
+		<ul class="lu-menu">
+			{
+				roots.map((root) => (
+					<li class={isActive(root.href) ? 'active' : ''}>
+						<a href={root.href}>{root.title}</a>
+						{root.children.length > 0 && (
+							<ul>
+								{root.children.map((child) => (
+									<LuNavNode node={child} />
+								))}
+							</ul>
+						)}
+					</li>
+				))
+			}
+		</ul>
+	</div>
 </nav>

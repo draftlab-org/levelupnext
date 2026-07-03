@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import CurriculumPage from '@components/levelup/CurriculumPage.astro';
+import LuToc, { type TocEntry } from '@components/levelup/LuToc.tsx';
 import LevelUpLayout from '@layouts/LevelUpLayout.astro';
 import {
   getBreadcrumb,
@@ -27,15 +28,21 @@ export const getStaticPaths = (async () => {
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
 
-const toc = headings
-  .filter((h) => h.depth >= 2 && h.depth <= 3)
-  .map((h) => ({ slug: h.slug, text: h.text, depth: h.depth }));
-
-const crumbs = await getBreadcrumb(entry);
-
 const layout = entry.data.layout ?? 'content-page';
 const isIndex =
   layout === 'page-index' || layout === 'curriculum' || layout === 'community';
+
+// Build a nested table of contents (h2 with h3 children) for the sidebar.
+const tocEntries: TocEntry[] = [];
+for (const h of headings.filter((x) => x.depth >= 2 && x.depth <= 3)) {
+  const node: TocEntry = { id: h.slug, value: h.text, depth: h.depth, children: [] };
+  const parent = tocEntries[tocEntries.length - 1];
+  if (h.depth === 2 || !parent) tocEntries.push(node);
+  else parent.children!.push(node);
+}
+const showToc = !isIndex && tocEntries.length >= 3;
+
+const crumbs = await getBreadcrumb(entry);
 
 const children = isIndex ? await getSectionChildren(entry.data.title) : [];
 const isCurriculumIndex = layout === 'curriculum';
@@ -48,13 +55,13 @@ const indexHeading = isCurriculumIndex
 ---
 
 <LevelUpLayout title={entry.data.title} description={entry.data.summary ?? undefined}>
+	{showToc && <LuToc slot="toc" client:load entries={tocEntries} />}
 	<CurriculumPage
 		entry={entry}
 		crumbs={crumbs}
 		childPages={children}
 		childLinkText={childLinkText}
 		indexHeading={indexHeading}
-		toc={toc}
 	>
 		<Content />
 	</CurriculumPage>

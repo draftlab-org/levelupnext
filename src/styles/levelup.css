@@ -49,7 +49,6 @@
 }
 .lu-breadcrumb li.active a {
   color: var(--color-secondary-500);
-  font-weight: 700;
   pointer-events: none;
 }
 
@@ -69,9 +68,12 @@
   padding-left: 2.5rem;
 }
 
-/* ---- Navigation (recursive hover dropdowns) -------------------- */
+/* ---- Navigation (wide single-level hover dropdowns) ----------- */
 .lu-nav {
-  background-color: var(--color-white);
+  background-color: var(--color-white); /* full-width white bar */
+}
+.lu-nav-inner {
+  position: relative; /* positioning context for the full-width dropdown */
 }
 .lu-menu,
 .lu-menu ul {
@@ -88,8 +90,10 @@
   gap: 0.25rem 1rem;
   padding: 0 4%;
 }
+/* top-level items stay `static` so their dropdown positions against the nav
+   (not the item), letting it span the full nav width like the original site */
 .lu-menu > li {
-  position: relative;
+  position: static;
 }
 .lu-menu > li > a {
   display: inline-block;
@@ -118,16 +122,12 @@
   color: var(--color-secondary-500);
 }
 
-/* submenu panels */
+/* dropdown panel */
 .lu-menu ul {
   position: absolute;
-  left: 0;
-  top: 100%;
   z-index: 40;
-  min-width: 16rem;
-  max-width: 22rem;
   background-color: var(--color-teal-light);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px);
@@ -135,37 +135,79 @@
     opacity 0.15s ease,
     transform 0.15s ease;
 }
-.lu-menu li:hover > ul,
-.lu-menu li:focus-within > ul {
+/* first level spans (almost) the full nav width, matching the original */
+.lu-menu > li > ul {
+  top: 100%;
+  left: 4%;
+  right: 4%;
+  padding: 0.5rem 0;
+}
+.lu-menu > li:hover > ul,
+.lu-menu > li:focus-within > ul {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
-/* nested (2nd+ level) flyout to the side */
+/* the original reveals only one dropdown level; deeper pages are reached from
+   their section-index page */
 .lu-menu ul ul {
-  top: 0;
-  left: 100%;
-}
-.lu-menu ul li {
-  position: relative;
+  display: none;
 }
 .lu-menu ul a {
   display: block;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.5rem;
   color: var(--color-white);
   font-family: var(--font-sans);
   font-size: 0.95rem;
   line-height: 1.35;
 }
-.lu-menu ul li:has(ul) > a::after {
-  content: '\25b8'; /* small ► for items with children */
-  float: right;
-  opacity: 0.8;
-}
 .lu-menu ul a:hover,
 .lu-menu ul a:focus {
   background-color: var(--color-white);
   color: var(--color-secondary-500);
+}
+
+/* ---- Mobile: every nav item stacks one under the other -------- */
+@media (max-width: 767px) {
+  .lu-menu {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+  }
+  .lu-menu > li {
+    border-top: 1px solid var(--color-mist);
+  }
+  .lu-menu > li:first-child {
+    border-top: 0;
+  }
+  .lu-menu > li > a {
+    display: block;
+    text-align: center;
+    white-space: normal;
+    padding: 0.85rem 1rem;
+  }
+  /* dropdown becomes an in-flow, full-width block stacked beneath its parent */
+  .lu-menu > li > ul {
+    position: static;
+    left: auto;
+    right: auto;
+    display: none;
+    width: 100%;
+    padding: 0;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .lu-menu > li:hover > ul,
+  .lu-menu > li:focus-within > ul {
+    display: block;
+  }
+  .lu-menu ul a {
+    text-align: center;
+  }
 }
 
 /* ---- Footer --------------------------------------------------- */
@@ -196,7 +238,8 @@
 .lu-content h5 {
   color: var(--color-secondary-500);
   font-family: var(--font-serif);
-  font-weight: 700;
+  /* Original site loaded only Arvo 400 — headings are regular weight */
+  font-weight: 400;
   margin-top: 2rem;
   line-height: 1.2;
 }

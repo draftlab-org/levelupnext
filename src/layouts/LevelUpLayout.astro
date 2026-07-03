@@ -13,18 +13,34 @@ export interface Props {
 }
 
 const { title, description, image, showNav = true } = Astro.props;
+const hasToc = Astro.slots.has('toc');
 ---
 
 <BaseLayout title={title} description={description} image={image}>
-	<div class="flex min-h-screen w-full flex-col items-center bg-sand">
-		<div class="lu-outer flex w-full max-w-[960px] flex-col">
-			<LuHeader />
-			{showNav && <LuNav />}
-			<main class="flex w-full flex-col gap-5 px-3 py-5 sm:px-5">
+	<div class="flex min-h-screen w-full flex-col bg-sand">
+		{
+			/* Full-width header & nav bars; their inner content is held to a
+		    centred max-width for sensible margins. */
+		}
+		<LuHeader />
+		{showNav && <LuNav />}
+
+		{
+			/* Body: the article column keeps its width, the ToC floats to its right
+		    on the sand background (xl+). */
+		}
+		<div class="mx-auto flex w-full max-w-330 flex-1 px-4 sm:px-6">
+			<main class="mx-auto flex w-full max-w-240 flex-col gap-5 py-6 xl:mx-0">
 				<slot />
 			</main>
-			<LuFooter />
+
+			<aside class="hidden shrink-0 grow basis-0 pt-6 pl-5 xl:block">
+				{hasToc && <slot name="toc" />}
+			</aside>
 		</div>
+
+		{/* Full-width footer */}
+		<LuFooter />
 	</div>
 	<LuSearch client:idle />
 </BaseLayout>

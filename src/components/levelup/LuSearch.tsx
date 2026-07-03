@@ -90,7 +90,7 @@ export default function LuSearch() {
     >
       <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto p-4 sm:p-6 md:p-20">
-        <DialogPanel className="mx-auto max-w-xl overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black/10">
+        <DialogPanel className="mx-auto max-w-xl overflow-hidden bg-white shadow-2xl ring-1 ring-black/10">
           <Combobox
             onChange={(item: Doc | null) => {
               if (item) window.location.href = item.url;
@@ -151,7 +151,7 @@ export default function LuSearch() {
             {query.trim().length < 2 && (
               <p className="px-4 py-8 text-center text-sm text-gray-400">
                 Search the curriculum, guides, and news. Press{' '}
-                <kbd className="rounded border border-gray-300 px-1">/</kbd> any
+                <kbd className="border border-gray-300 px-1">/</kbd> any
                 time to search.
               </p>
             )}

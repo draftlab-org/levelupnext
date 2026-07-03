@@ -9,7 +9,7 @@ const description = site?.data.description ?? '';
 
 <header class="lu-header w-full">
 	<div
-		class="mx-auto flex w-full items-center justify-between gap-4 px-6 py-4 sm:px-8"
+		class="mx-auto flex w-full max-w-[1320px] items-center justify-between gap-4 px-4 py-4 sm:px-6"
 	>
 		<a href="/" class="shrink-0" aria-label="LevelUp home">
 			<Logo class="h-8 w-auto text-white sm:h-9" />
@@ -23,7 +23,7 @@ const description = site?.data.description ?? '';
 			<button
 				type="button"
 				aria-label="Search"
-				class="flex items-center gap-2 rounded-full border border-white/70 px-3 py-1.5 text-sm text-white transition-colors hover:bg-white/20"
+				class="flex items-center gap-2 border border-white/70 px-3 py-1.5 text-sm text-white transition-colors hover:bg-white/20"
 				onclick="window.dispatchEvent(new CustomEvent('lu-open-search'))"
 			>
 				<MagnifyingGlassIcon class="h-5 w-5" />

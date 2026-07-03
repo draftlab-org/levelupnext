@@ -71,7 +71,7 @@
   h4,
   h5,
   h6 {
-    @apply scroll-mt-24 font-serif font-bold text-secondary-500;
+    @apply scroll-mt-24 font-serif text-secondary-500;
   }
   h1 {
     @apply text-4xl md:text-6xl;
